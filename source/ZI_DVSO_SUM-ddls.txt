@@ -1,0 +1,18 @@
+@EndUserText.label: 'Suma NetAmount Items por Sales Order'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+
+// Suma de items
+define view entity ZI_DVSO_SUM      
+    as select from ZR_DVSO_I
+    
+{
+
+  key SoUUID,
+  key CurrencyCode,
+
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  cast( sum( NetAmount ) as abap.curr( 23, 2 ) ) as ItemsTotalNetAmount
+  
+}
+
+group by SoUUID, CurrencyCode
