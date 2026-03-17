@@ -19,14 +19,14 @@ It manages a **Sales Order** business object with **Header (root)** and **Items 
 ### 1) Parent–Child Model (Header → Items) with Composition
 The BO is modeled around:
 - **Root entity (Header):** [`ZR_DVSO_H`](source/ZR_DVSO_H-ddls.txt)
-- **Child entity (Items):** [`ZR_DVSO_I`](src/zr_dvso_i.ddls.asddls#L1-L42)
+- **Child entity (Items):** [`ZR_DVSO_I`](source/ZR_DVSO_I-ddls.txt)
 
 The service exposes projections:
-- **Header projection:** [`ZC_DVSO_H`](src/zc_dvso_h.ddls.asddls#L1-L56)
-- **Item projection:** [`ZC_DVSO_I`](src/zc_dvso_i.ddls.asddls#L1-L50)
+- **Header projection:** [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt)
+- **Item projection:** [`ZC_DVSO_I`](source/ZC_DVSO_H-ddls.txt)
 
 Redirected composition is visible in the header projection:
-- `_Items redirected to composition child ZC_DVSO_I`: [`ZC_DVSO_H`](src/zc_dvso_h.ddls.asddls#L55)
+- `_Items redirected to composition child ZC_DVSO_I`: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt)
 
 ---
 
