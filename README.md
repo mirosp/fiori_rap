@@ -18,7 +18,7 @@ It manages a **Sales Order** business object with **Header (root)** and **Items 
 
 ### 1) Parent–Child Model (Header → Items) with Composition
 The BO is modeled around:
-- **Root entity (Header):** [`ZR_DVSO_H`](source/zr_dvso_h-ddls)
+- **Root entity (Header):** [`ZR_DVSO_H`](source/ZR_DVSO_H-ddls)
 - **Child entity (Items):** [`ZR_DVSO_I`](src/zr_dvso_i.ddls.asddls#L1-L42)
 
 The service exposes projections:
