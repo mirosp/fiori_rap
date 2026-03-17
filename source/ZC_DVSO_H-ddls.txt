@@ -65,4 +65,3 @@ define root view entity ZC_DVSO_H
       //      _KPI,
       _Items : redirected to composition child ZC_DVSO_I
 }
-
