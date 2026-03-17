@@ -1,1 +1,51 @@
+@Metadata.allowExtensions: true
+@Metadata.ignorePropagatedAnnotations: true
+@EndUserText.label: '###GENERATED Core Data Service Entity'
+
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+define view entity ZC_DVSO_I
+  as projection on ZR_DVSO_I
+  association [1..1] to ZR_DVSO_I as _BaseEntity on $projection.ItemUUID = _BaseEntity.ItemUUID
+{
+  key ItemUUID,
+      SoUUID,
+      ItemNo,
+
+      @ObjectModel.text.element: [ 'ProductName' ]
+      @Consumption.valueHelpDefinition: [ { entity: { name: 'ZI_Supplement_StdVH', element: 'SupplementID' }, useForValidation: true } ]
+      ProductID,
+
+//      @Semantics.text: true
+      _Product.SupplementText as ProductName,
+
+      @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
+      Quantity,
+
+      @Consumption.valueHelpDefinition: [ { entity: { name: 'I_UnitOfMeasureStdVH', element: 'UnitOfMeasure' }, useForValidation: true } ]
+      QuantityUnit,
+
+      @Consumption.valueHelpDefinition: [ { entity: { name: 'I_CurrencyStdVH', element: 'Currency' }, useForValidation: true } ]
+      CurrencyCode,
+
+      @Semantics.amount.currencyCode: 'CurrencyCode'
+      NetAmount,
+
+      Note,
+      
+      // Campos Donut - Total 100% 
+      @Semantics.amount.currencyCode: 'CurrencyCode'
+      _Header.NetAmount as TotalPriceForChart,
+      
+      @Semantics: { user.createdBy: true } LocalCreatedBy,
+      @Semantics: { systemDateTime.createdAt: true } LocalCreatedAt,
+      @Semantics: { user.localInstanceLastChangedBy: true } LocalLastChangedBy,
+      @Semantics: { systemDateTime.localInstanceLastChangedAt: true } LocalLastChangedAt,
+      @Semantics: { systemDateTime.lastChangedAt: true } LastChangedAt,
+
+      _BaseEntity,   
+
+      /* Asociaciones */
+//      _Product,
+      _Header : redirected to parent ZC_DVSO_H
+}
 
