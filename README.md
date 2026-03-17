@@ -176,26 +176,6 @@ Service binding (artifact):
 
 ---
 
-## Repository structure
-- `src/` ABAP objects serialized by abapGit
-- `.abapgit.xml` repository descriptor
-- `docs/`  screenshots + demo video `TO DO`
-
----
-
-## How to run (high level)
-1. Import into an ABAP system using **abapGit**
-2. Activate all objects (CDS + behavior + handler classes)
-3. Publish the **Service Binding** (OData V4)
-4. Launch the Fiori preview
-5. Test:
-   - Create Sales Order + Items (draft)
-   - Create item → CurrencyCode auto-inherited 💶
-   - Exceed budget → validation error blocks activation ✅❌
-   - Run actions → status/amounts updated + UI refresh 🔄
-
----
-
 `abap` · `rap` · `abap-cloud` · `fiori-elements` · `odata-v4` · `cds` · `managed-draft`
 
 ---
