@@ -1,8 +1,8 @@
 projection implementation in class ZBP_C_DVSO_H unique;
-strict;
+strict( 1 );
 extensible;
 use draft;
-//use side effects;
+use side effects;
 
 define behavior for ZC_DVSO_H alias Header
 extensible
@@ -13,12 +13,12 @@ use etag
   use update;
   use delete;
 
-  // Acciones Custom
+  // Custome Action
   use action Approve;
   use action Reject;
   use action CalculateAmounts;
 
-  // Exponer la composición en la proyección
+  // Expose the composition in the projection
   use association _Items { create; with draft; }
 
   use action Edit;
@@ -28,10 +28,10 @@ use etag
   use action Prepare;
 
   // Instance features
-  //  side effects {
-  //    field NetAmount affects field GrossAmount;
-  //    field TaxAmount affects field GrossAmount;
-  //  }
+    side effects {
+      field NetAmount affects field GrossAmount;
+      field TaxAmount affects field GrossAmount;
+    }
 
 }
 
@@ -42,9 +42,9 @@ define behavior for ZC_DVSO_I alias Item
 
   use association _Header { with draft; }
 
-  //  side effects {
-  //    field NetAmount affects entity _Header;
-  //    $self affects entity _Header;
-  //  }
+    side effects {
+      field NetAmount affects entity _Header;
+      $self affects entity _Header;
+    }
 
 }
