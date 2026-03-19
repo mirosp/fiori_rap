@@ -1,0 +1,81 @@
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Sales Order',
+    typeNamePlural: 'Sales Orders',
+    title: { type: #STANDARD, value: 'SalesOrder' }
+//    description: { type: #STANDARD, value: 'SalesOrder' }
+  },
+  presentationVariant: [ { visualizations: [ { type: #AS_LINEITEM } ] } ]
+}
+annotate view ZC_DVSO_H with
+{
+  @UI.facet: [
+    { id: 'KPI_CONSUMO', purpose: #HEADER, type: #DATAPOINT_REFERENCE, label: 'Consumo', position: 5, targetQualifier: 'KPI_CONSUMO' },
+    { id: 'Header', type: #IDENTIFICATION_REFERENCE, label: 'Sales Order', position: 10 },
+    { id: 'Items', type: #LINEITEM_REFERENCE,  label: 'Items', position: 20, targetElement: '_Items' }
+  ]
+
+  @UI.hidden: true SoUUID;
+  @UI.hidden: true LocalCreatedBy;
+  @UI.hidden: true LocalCreatedAt;
+  @UI.hidden: true LocalLastChangedBy;
+  @UI.hidden: true LocalLastChangedAt;
+  @UI.hidden: true LastChangedAt;
+  @UI.hidden: true _BaseEntity;
+
+  @UI.lineItem:       [ { position: 10, importance: #HIGH, label: 'Sales Order' } ]
+  //@UI.identification: [ { position: 10, label: 'Sales Order' } ]
+  @UI.selectionField: [ { position: 10 } ]
+  SalesOrder;
+
+  @UI.lineItem:       [ { position: 20, importance: #HIGH, label: 'SoldToParty' } ]
+  @UI.identification: [ { position: 20, label: 'SoldToParty' } ]
+  @UI.selectionField: [ { position: 20 } ]
+  @UI.textArrangement: #TEXT_FIRST
+  SoldToParty;
+
+  @UI.lineItem:       [ { position: 30, importance: #MEDIUM, label: 'Document Date' } ]
+  @UI.identification: [ { position: 30, label: 'Document Date' } ]
+  @UI.selectionField: [ { position: 30 } ]
+  DocumentDate;
+
+  @UI.lineItem:       [ { position: 40, importance: #LOW, label: 'Currency' } ]
+  @UI.identification: [ { position: 40, label: 'Currency' } ]
+  CurrencyCode;
+
+  @UI.lineItem:       [ { position: 50, importance: #MEDIUM, label: 'Net Amount' } ]
+  @UI.identification: [ { position: 50, label: 'Net Amount' } ]
+  NetAmount;
+
+  @UI.lineItem:       [ { position: 60, importance: #LOW, label: 'Tax Amount' } ]
+  @UI.identification: [ { position: 60, label: 'Tax Amount' } ]
+  TaxAmount;
+
+  @UI.lineItem:       [ { position: 70, importance: #MEDIUM, label: 'Gross Amount' } ]
+  @UI.identification: [ { position: 70, label: 'Gross Amount' } ]
+  GrossAmount;
+
+  @UI.lineItem:       [{ position: 80, importance: #HIGH, label: 'Status' }]
+  @UI.selectionField: [ { position: 40 } ]
+  OverallStatus;
+  
+  @UI.dataPoint: {
+      qualifier: 'KPI_CONSUMO',
+      title: 'Importe de ítems / Total del pedido',
+      description: 'Suma de items vs total',
+      visualization: #PROGRESS,
+      targetValueElement: 'NetAmount',
+      criticality: 'ConsumptionCriticality'
+  }
+  itemstotalnetamount;
+  
+  @UI.identification: [ { position: 55, label: 'Restante' } ]
+  remainingamount;
+  
+  @UI.lineItem: [ { type: #FOR_ACTION, dataAction: 'Approve', label: 'Approve' },
+                  { type: #FOR_ACTION, dataAction: 'Reject',  label: 'Reject'  },
+                  { type: #FOR_ACTION, dataAction: 'CalculateAmounts', label: 'Recalculate' }
+  ]
+  @UI.hidden: true consumptioncriticality;
+}
