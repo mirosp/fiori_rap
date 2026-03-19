@@ -1,0 +1,71 @@
+@Metadata.layer: #CORE
+
+@UI.chart: [
+  {
+    qualifier: 'itemShareChart',
+    title: 'Item Share',
+    description: 'Item amount in relation to total travel price',
+    chartType: #DONUT,
+    measures: ['NetAmount'],
+    measureAttributes: [
+      { measure: 'NetAmount', role: #AXIS_1, asDataPoint: true }
+    ]
+  }
+]
+
+annotate view ZC_DVSO_I with
+{
+  @UI.facet: [ { id: 'ItemGeneral', type: #IDENTIFICATION_REFERENCE, label: 'Item', position: 10 } ]
+
+  @UI.hidden: true ItemUUID;
+  @UI.hidden: true SoUUID;
+  @UI.hidden: true LocalCreatedBy;
+  @UI.hidden: true LocalCreatedAt;
+  @UI.hidden: true LocalLastChangedBy;
+  @UI.hidden: true LocalLastChangedAt;
+  @UI.hidden: true LastChangedAt;
+  @UI.hidden: true _BaseEntity;
+  @UI.hidden: true TotalPriceForChart;
+
+  @UI.lineItem:       [ { position: 10, importance: #LOW,    label: 'Item No' } ]
+  @UI.identification: [ { position: 10, label: 'Item No' } ]
+  ItemNo;
+
+  @UI.lineItem:       [ { position: 20, importance: #HIGH,   label: 'ProductID' } ]
+  @UI.identification: [ { position: 20, label: 'ProductID' } ]
+  @UI.textArrangement: #TEXT_FIRST
+  ProductID;
+
+  @UI.lineItem:       [ { position: 30, importance: #MEDIUM, label: 'Quantity' } ]
+  @UI.identification: [ { position: 30, label: 'Quantity' } ]
+  Quantity;
+
+  @UI.lineItem:       [ { position: 40, importance: #MEDIUM, label: 'Unit' } ]
+  @UI.identification: [ { position: 40, label: 'Unit' } ]
+  QuantityUnit;
+  
+  // Amount se muestra como número + donut como columna adicional
+ // @UI.lineItem:       [ { position: 50, importance: #HIGH,   label: 'Net Amount' } ]
+ // @UI.identification: [ { position: 50, label: 'Net Amount' } ]
+  
+  @UI.identification: [ { position: 50, label: 'Net Amount' } ]
+  @UI: {
+    dataPoint: {
+      targetValueElement: 'TotalPriceForChart'
+    },
+    lineItem: [
+      { position: 50, label: 'Net Amount' },
+      { type: #AS_CHART, label: 'Share', valueQualifier: 'itemShareChart', position: 55 }
+    ]
+  }
+  NetAmount;
+
+  @UI.lineItem:       [ { position: 60, importance: #LOW,    label: 'Currency' } ]
+  @UI.identification: [ { position: 60, label: 'Currency' } ]
+  CurrencyCode;
+
+  @UI.lineItem:       [ { position: 70, importance: #LOW,    label: 'Note' } ]
+  @UI.identification: [ { position: 70, label: 'Note' } ]
+  Note;
+  
+}
