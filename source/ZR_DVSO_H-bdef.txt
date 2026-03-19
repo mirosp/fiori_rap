@@ -1,0 +1,145 @@
+managed implementation in class ZBP_R_DVSO_H unique; // Clase Z - Punto extensión
+strict( 1 );
+with draft;
+extensible;
+
+define behavior for ZR_DVSO_H alias Header
+persistent table zdv_so_h
+extensible
+draft table zdvso_h_d
+etag master LocalLastChangedAt // Control de concurrencia
+lock master total etag LastChangedAt // Bloqueo
+authorization master ( global )
+{
+  field ( readonly ) // Campos solo lectura
+  SoUUID,
+  SalesOrder,
+  LocalCreatedBy,
+  LocalCreatedAt,
+  LocalLastChangedBy,
+  LocalLastChangedAt,
+  LastChangedAt;
+
+  field ( numbering : managed )
+  SoUUID;
+
+  field ( mandatory )
+  SoldToParty,
+  DocumentDate,
+  CurrencyCode;
+
+
+  create;
+  update;
+  delete;
+
+  // Association
+  association _Items { create; with draft; }
+
+  // Actions
+  action Approve result [1] $self;
+  action Reject result [1] $self;
+  action CalculateAmounts result [1] $self;
+
+  // Validations
+  validation validateCustomer on save { create; update; field SoldToParty; }
+  validation validateAmounts on save { create; update; field NetAmount, TaxAmount, GrossAmount; }
+  validation validateDocumentDate on save { create; update; field DocumentDate; }
+  validation validateCurrency on save { create; update; field CurrencyCode; }
+
+  // Determinations
+  determination createDocument on save { create; update; field SalesOrder; }
+  determination setInitialValues on modify { create; }
+
+  draft action Activate;
+  draft action Discard;
+  draft action Edit;
+  draft action Resume;
+  draft determine action Prepare
+  {
+    validation Item ~ validateItemsSum;
+    validation validateCustomer;
+    validation validateAmounts;
+    validation validateDocumentDate;
+    validation validateCurrency;
+  }
+
+  mapping for ZDV_SO_H corresponding extensible
+  {
+    SoUUID = so_uuid;
+    SalesOrder = sales_order;
+    SoldToParty = sold_to_party;
+    DocumentDate = document_date;
+    CurrencyCode = currency_code;
+    NetAmount = net_amount;
+    TaxAmount = tax_amount;
+    GrossAmount = gross_amount;
+    OverallStatus = overall_status;
+    LocalCreatedBy = local_created_by;
+    LocalCreatedAt = local_created_at;
+    LocalLastChangedBy = local_last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt = last_changed_at;
+  }
+
+}
+
+define behavior for ZR_DVSO_I alias Item
+persistent table zdv_so_i
+draft table zdvso_i_d
+lock dependent by _Header
+authorization dependent by _Header
+etag master LocalLastChangedAt
+{
+  field ( readonly )
+  ItemUUID,
+  SoUUID,
+  ItemNo,
+  LocalCreatedBy,
+  LocalCreatedAt,
+  LocalLastChangedBy,
+  LocalLastChangedAt,
+  LastChangedAt;
+
+  field ( numbering : managed )
+  ItemUUID;
+
+  field ( mandatory )
+  ProductID,
+  Quantity,
+  QuantityUnit,
+  CurrencyCode;
+
+  update;
+  delete;
+
+  // Associations
+  association _Header { with draft; }
+
+  // Determinations
+  determination createItem on modify { create; field ItemNo; }
+  determination getCurrency on modify { create; }
+
+  // Validations
+  validation validateItemsSum on save { create; update; field NetAmount; }
+
+
+
+  mapping for ZDV_SO_I
+  {
+    ItemUUID = item_uuid;
+    SoUUID = so_uuid;
+    ItemNo = item_no;
+    ProductID = product_id;
+    Quantity = quantity;
+    QuantityUnit = quantity_unit;
+    CurrencyCode = currency_code;
+    NetAmount = net_amount;
+    Note = note;
+    LocalCreatedBy = local_created_by;
+    LocalCreatedAt = local_created_at;
+    LocalLastChangedBy = local_last_changed_by;
+    LocalLastChangedAt = local_last_changed_at;
+    LastChangedAt = last_changed_at;
+  }
+}
