@@ -1,6 +1,6 @@
 # Exercise 1: SEGW
 
-## Introduction
+## Overview
 
 Creation SEGW(tcode) project. OData version 2.
 
