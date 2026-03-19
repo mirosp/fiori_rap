@@ -11,4 +11,8 @@ Creation SEGW(tcode) project. OData version 2.
 
     ![SEGW create](../ex01/images/segw_create.png)
 
+    Create project (OData service).
+
+    ![SEGW create](../source/ZBP_C_DVSO_H-clas.txt)
+
 
