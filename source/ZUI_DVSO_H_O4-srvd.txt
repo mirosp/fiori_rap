@@ -1,0 +1,7 @@
+@EndUserText: {
+  label: 'Service Definition for ZC_DVSO_H'
+}
+define service ZUI_DVSO_H_O4 {
+  expose ZC_DVSO_H as Header;
+  expose ZC_DVSO_I as Items;
+}
