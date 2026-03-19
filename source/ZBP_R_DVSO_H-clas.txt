@@ -1,0 +1,624 @@
+class ZBP_R_DVSO_H definition
+  public
+  for behavior of ZR_DVSO_H .
+
+public section.
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZBP_R_DVSO_H IMPLEMENTATION.
+ENDCLASS.
+
+***********************************************************************
+* Local Types
+***********************************************************************
+
+CLASS lhc_item DEFINITION INHERITING FROM cl_abap_behavior_handler.
+
+  PRIVATE SECTION.
+
+    METHODS createItem FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Item~createItem.
+    METHODS validateItemsSum FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Item~validateItemsSum.
+    METHODS getCurrency FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Item~getCurrency.
+
+ENDCLASS.
+
+CLASS lhc_item IMPLEMENTATION.
+
+***********************************************************************
+* Crea ID para el Item Number
+***********************************************************************
+  METHOD createItem.
+
+    " Leer el ítem recién creado (draft)
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Item
+        FIELDS ( ItemNo SoUUID )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(new_items).
+
+    IF new_items IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Recuperamos el SoUUID Header
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Item BY \_Header
+        FIELDS ( SoUUID )
+        WITH CORRESPONDING #( new_items )
+      RESULT DATA(header).
+
+    " Leer todos los items del sales order usando %tky del Header
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header BY \_Items
+        FIELDS ( SoUUID ItemNo )
+        WITH VALUE #( FOR tr IN header ( %tky = tr-%tky ) )
+      RESULT DATA(all_items).
+
+    " Max ItemNo por SoUUID
+    TYPES: BEGIN OF ty_max,
+             SoUUID TYPE sysuuid_x16,
+             MaxNo  TYPE i,
+           END OF ty_max.
+    DATA lt_max TYPE HASHED TABLE OF ty_max WITH UNIQUE KEY SoUUID.
+
+    LOOP AT all_items ASSIGNING FIELD-SYMBOL(<ai>).
+      READ TABLE lt_max ASSIGNING FIELD-SYMBOL(<m>) WITH KEY SoUUID = <ai>-SoUUID.
+      IF sy-subrc <> 0.
+        INSERT VALUE ty_max( SoUUID = <ai>-SoUUID MaxNo = 0 )
+          INTO TABLE lt_max ASSIGNING <m>.
+      ENDIF.
+
+      IF <ai>-ItemNo IS NOT INITIAL AND <ai>-ItemNo CO '0123456789'.
+        DATA(lv_curr) = CONV i( <ai>-ItemNo ).
+        IF lv_curr > <m>-MaxNo.
+          <m>-MaxNo = lv_curr.
+        ENDIF.
+      ENDIF.
+    ENDLOOP.
+
+    " Asignar números a los items nuevos sin ItemNo (000010, 000020...)
+    DATA lt_upd TYPE TABLE FOR UPDATE zr_dvso_i.
+
+    LOOP AT new_items ASSIGNING FIELD-SYMBOL(<ch>)
+      WHERE ItemNo IS INITIAL.
+
+      " Asegurar entrada en tabla de max
+      READ TABLE lt_max ASSIGNING <m> WITH KEY SoUUID = <ch>-SoUUID.
+      IF sy-subrc <> 0.
+        INSERT VALUE ty_max( SoUUID = <ch>-SoUUID MaxNo = 0 )
+          INTO TABLE lt_max ASSIGNING <m>.
+      ENDIF.
+
+      <m>-MaxNo = <m>-MaxNo + 10.
+
+      DATA(lv_itemno) = |{ <m>-MaxNo WIDTH = 6 ALIGN = RIGHT PAD = '0' }|.
+
+      APPEND VALUE #(
+        %tky             = <ch>-%tky
+        ItemNo           = lv_itemno
+      ) TO lt_upd.
+
+    ENDLOOP.
+
+    IF lt_upd IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Persistir en el buffer draft (LOCAL MODE)
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Item
+        UPDATE FIELDS ( ItemNo )
+          WITH lt_upd
+      FAILED   DATA(lt_failed)
+      REPORTED DATA(lt_reported).
+
+    "Checkear
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Item
+          FIELDS ( ItemNo )
+          WITH VALUE #( FOR u IN lt_upd ( %tky = u-%tky ) )
+        RESULT DATA(lt_check).
+
+    IF lt_failed IS NOT INITIAL OR lt_reported IS NOT INITIAL.
+      DATA(lv_t) = 'a'.
+    ENDIF.
+
+  ENDMETHOD.
+
+**********************************************************************
+* Valida que la suma total de los Items no supere el total
+**********************************************************************
+  METHOD validateItemsSum.
+
+    " Leemos todos los items a guardar
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Item
+            FIELDS ( ItemUUID SoUUID NetAmount CurrencyCode )
+            WITH CORRESPONDING #( keys )
+        RESULT DATA(items_changed).
+
+    IF items_changed IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Recuperamos el amount total
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Item BY \_Header
+            FIELDS ( SoUUID NetAmount CurrencyCode )
+            WITH CORRESPONDING #( items_changed )
+        RESULT DATA(sales_order).
+
+    " Leer todos los items del Sales Order usando %tky del Header (no SoUUID)
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Header BY \_Items
+        FIELDS ( SoUUID NetAmount CurrencyCode )
+            WITH VALUE #( FOR head IN sales_order ( %tky = head-%tky  ) )
+        RESULT DATA(all_items).
+
+
+    " Sumar por cada Sales Order
+    TYPES: BEGIN OF ty_sum,
+             SoUUID    TYPE sysuuid_x16,
+             SumAmount TYPE zr_dvso_i-NetAmount,
+           END OF ty_sum.
+    DATA sums TYPE HASHED TABLE OF ty_sum WITH UNIQUE KEY SoUUID.
+
+    LOOP AT all_items ASSIGNING FIELD-SYMBOL(<ai>).
+      READ TABLE sums ASSIGNING FIELD-SYMBOL(<s>) WITH KEY SoUUID = <ai>-SoUUID.
+      IF sy-subrc <> 0.
+        INSERT VALUE ty_sum( SoUUID = <ai>-SoUUID SumAmount = 0 ) INTO TABLE sums ASSIGNING <s>.
+      ENDIF.
+      <s>-SumAmount = <s>-SumAmount + <ai>-NetAmount.
+    ENDLOOP.
+
+    " Validamos y marcamos error en el item cambiado
+    LOOP AT items_changed INTO DATA(ch).
+      READ TABLE sales_order INTO DATA(so) WITH KEY SoUUID = ch-SoUUID.
+      READ TABLE sums        INTO DATA(sm) WITH KEY SoUUID = ch-SoUUID.
+
+      IF sm-SumAmount > so-NetAmount.
+        APPEND VALUE #( %tky = ch-%tky ) TO failed-item.
+        APPEND VALUE #(
+          %tky = ch-%tky
+          %msg = new_message_with_text(
+                     severity = if_abap_behv_message=>severity-error
+                     text     = 'The amount exceeds the Sales Order total'
+                   )
+        ) TO reported-item.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+**********************************************************************
+* Get Currency Code from Header - Sales Order
+**********************************************************************
+  METHOD getCurrency.
+
+    " Leemos todos los items a guardar
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Item
+            FIELDS ( ItemUUID SoUUID NetAmount CurrencyCode )
+            WITH CORRESPONDING #( keys )
+        RESULT DATA(items).
+
+    IF items IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Recuperamos el currency Code
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+        ENTITY Item BY \_Header
+            FIELDS ( SoUUID CurrencyCode )
+            WITH CORRESPONDING #( items )
+        RESULT DATA(currency_header).
+
+    IF currency_header IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    READ TABLE currency_header ASSIGNING FIELD-SYMBOL(<fs_header>) INDEX 1.
+    IF sy-subrc <> 0 OR <fs_header>-CurrencyCode IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Tabla Update
+    DATA lt_upd TYPE TABLE FOR UPDATE zr_dvso_i.
+
+    LOOP AT items ASSIGNING FIELD-SYMBOL(<fs_it>).
+
+      APPEND VALUE #(
+       %tky         = <fs_it>-%tky
+       CurrencyCode = <fs_header>-CurrencyCode
+     ) TO lt_upd.
+
+    ENDLOOP.
+
+    IF lt_upd IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Actualizar solo el campo SalesOrder
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+       ENTITY Item
+         UPDATE FIELDS ( CurrencyCode )
+         WITH lt_upd
+       FAILED DATA(lt_failed)
+       REPORTED DATA(lt_reported).
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS lhc_zr_dvso_h DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+    METHODS:
+      get_global_authorizations FOR GLOBAL AUTHORIZATION
+        IMPORTING
+        REQUEST requested_authorizations FOR Header
+        RESULT result,
+      createDocument FOR DETERMINE ON SAVE
+        IMPORTING keys FOR Header~createDocument,
+      Approve FOR MODIFY
+        IMPORTING keys FOR ACTION Header~Approve RESULT result.
+
+    METHODS CalculateAmounts FOR MODIFY
+      IMPORTING keys FOR ACTION Header~CalculateAmounts RESULT result.
+
+    METHODS Reject FOR MODIFY
+      IMPORTING keys FOR ACTION Header~Reject RESULT result.
+    METHODS validateAmounts FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Header~validateAmounts.
+
+    METHODS validateCurrency FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Header~validateCurrency.
+
+    METHODS validateCustomer FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Header~validateCustomer.
+
+    METHODS validateDocumentDate FOR VALIDATE ON SAVE
+      IMPORTING keys FOR Header~validateDocumentDate.
+    METHODS setInitialValues FOR DETERMINE ON MODIFY
+      IMPORTING keys FOR Header~setInitialValues.
+ENDCLASS.
+
+CLASS lhc_zr_dvso_h IMPLEMENTATION.
+
+  METHOD get_global_authorizations.
+
+    " Global authorization check - implement your authorization logic here
+    result-%create                  = if_abap_behv=>auth-allowed.
+    result-%update                  = if_abap_behv=>auth-allowed.
+    result-%delete                  = if_abap_behv=>auth-allowed.
+    result-%action-Approve          = if_abap_behv=>auth-allowed.
+    result-%action-Reject           = if_abap_behv=>auth-allowed.
+    result-%action-CalculateAmounts = if_abap_behv=>auth-allowed.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Crea ID para el Documento de Venta
+***********************************************************************
+  METHOD createDocument.
+
+    " Leer instancias afectadas
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        FIELDS ( SalesOrder SoUUID )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_header).
+
+    DATA lt_upd TYPE TABLE FOR UPDATE zr_dvso_h.
+
+    LOOP AT lt_header ASSIGNING FIELD-SYMBOL(<h>).
+
+      " Si ya viene informado, no lo tocamos
+      IF <h>-SalesOrder IS NOT INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      " SalesOrder = 'SO' + 8 hex del UUID => 10 chars
+      DATA(lv_so) = |SO{ <h>-SoUUID+0(8) }|.
+
+      APPEND VALUE #(
+        %tky       = <h>-%tky
+        SalesOrder = lv_so
+      ) TO lt_upd.
+
+    ENDLOOP.
+
+    IF lt_upd IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Actualizar solo el campo SalesOrder
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        UPDATE FIELDS ( SalesOrder )
+        WITH lt_upd
+      FAILED DATA(lt_failed)
+      REPORTED DATA(lt_reported).
+
+  ENDMETHOD.
+
+***********************************************************************
+* Aprovar Sales Order
+***********************************************************************
+  METHOD Approve.
+
+    " Read current data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    " Update status to Approved
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        UPDATE FIELDS ( OverallStatus )
+        WITH VALUE #( FOR so IN sales_orders
+                      ( %tky = so-%tky
+                        OverallStatus = 'A' ) )
+        FAILED DATA(failed_upd).
+
+    " Return updated data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated_sales_orders).
+
+    result = VALUE #( FOR so IN updated_sales_orders
+                      ( %tky = so-%tky
+                        %param = so ) ).
+
+    " Msg
+    IF failed_upd-header IS INITIAL.
+      INSERT VALUE #(
+           %tky = keys[ 1 ]-%tky
+           %msg = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-success
+                    text     = 'Sales Order approved successfully'
+                  )
+         ) INTO TABLE reported-header.
+    ENDIF.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Calcular Amount
+***********************************************************************
+  METHOD CalculateAmounts.
+
+    " Read current data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    " Calculate gross amount
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        UPDATE FIELDS ( GrossAmount )
+        WITH VALUE #( FOR so IN sales_orders
+                      ( %tky = so-%tky
+                        GrossAmount = so-NetAmount + so-TaxAmount ) )
+        FAILED DATA(failed_upd).
+
+    " Return updated data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated_sales_orders).
+
+    result = VALUE #( FOR so IN updated_sales_orders
+                      ( %tky = so-%tky
+                        %param = so ) ).
+
+    " Msg
+    IF failed_upd-header IS INITIAL.
+      INSERT VALUE #(
+           %tky = keys[ 1 ]-%tky
+           %msg = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-success
+                    text     = 'Amount recalculated successfully'
+                  )
+         ) INTO TABLE reported-header.
+    ENDIF.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Rechazar Sales Order
+***********************************************************************
+  METHOD Reject.
+
+    " Read current data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    " Update status to Rejected
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        UPDATE FIELDS ( OverallStatus )
+        WITH VALUE #( FOR so IN sales_orders
+                      ( %tky = so-%tky
+                        OverallStatus = 'R' ) )
+        FAILED DATA(failed_upd).
+
+    " Return updated data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(updated_sales_orders).
+
+    result = VALUE #( FOR so IN updated_sales_orders
+                      ( %tky = so-%tky
+                        %param = so ) ).
+
+    " Msg
+    IF failed_upd-header IS INITIAL.
+      INSERT VALUE #(
+           %tky = keys[ 1 ]-%tky
+           %msg = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-success
+                    text     = 'Sales Order rejected successfully'
+                  )
+         ) INTO TABLE reported-header.
+    ENDIF.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Validar Amount
+***********************************************************************
+  METHOD validateAmounts.
+
+    " Read amount data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        FIELDS ( NetAmount TaxAmount GrossAmount ) WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    LOOP AT sales_orders INTO DATA(sales_order).
+      " Check if net amount is positive
+      IF sales_order-NetAmount <= 0.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Net amount must be greater than zero' )
+                        %element-NetAmount = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+
+      " Check if tax amount is not negative
+      IF sales_order-TaxAmount < 0.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Tax amount cannot be negative' )
+                        %element-TaxAmount = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Validar CurrencyCode
+***********************************************************************
+  METHOD validateCurrency.
+
+    " Read currency data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        FIELDS ( CurrencyCode ) WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    LOOP AT sales_orders INTO DATA(sales_order).
+      " Check if currency is provided
+      IF sales_order-CurrencyCode IS INITIAL.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Currency is mandatory' )
+                        %element-CurrencyCode = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Validar Customer
+***********************************************************************
+  METHOD validateCustomer.
+
+    " Read customer data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        FIELDS ( SoldToParty ) WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    LOOP AT sales_orders INTO DATA(sales_order).
+      " Check if customer is provided
+      IF sales_order-SoldToParty IS INITIAL.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Customer is mandatory' )
+                        %element-SoldToParty = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Validar Document Date
+***********************************************************************
+  METHOD validateDocumentDate.
+
+    " Read document date data
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        FIELDS ( DocumentDate ) WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    LOOP AT sales_orders INTO DATA(sales_order).
+      " Check if document date is provided
+      IF sales_order-DocumentDate IS INITIAL.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Document date is mandatory' )
+                        %element-DocumentDate = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+
+      " Check if document date is not in the future
+      IF sales_order-DocumentDate > sy-datum.
+        APPEND VALUE #( %tky = sales_order-%tky ) TO failed-header.
+        APPEND VALUE #( %tky = sales_order-%tky
+                        %msg = new_message_with_text(
+                          severity = if_abap_behv_message=>severity-error
+                          text = 'Document date cannot be in the future' )
+                        %element-DocumentDate = if_abap_behv=>mk-on ) TO reported-header.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
+***********************************************************************
+* Inicializar Valores Header - Sales Order
+***********************************************************************
+  METHOD setInitialValues.
+
+    " Read sales order data for new entries
+    READ ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        ALL FIELDS WITH CORRESPONDING #( keys )
+      RESULT DATA(sales_orders).
+
+    " Set initial values for new sales orders
+    MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
+      ENTITY Header
+        UPDATE FIELDS ( OverallStatus NetAmount TaxAmount GrossAmount )
+        WITH VALUE #( FOR so IN sales_orders WHERE ( OverallStatus IS INITIAL )
+                      ( %tky = so-%tky
+                        OverallStatus = 'O'  " Open
+                        NetAmount = COND #( WHEN so-NetAmount IS INITIAL THEN '0.00' ELSE so-NetAmount )
+                        TaxAmount = COND #( WHEN so-TaxAmount IS INITIAL THEN '0.00' ELSE so-TaxAmount )
+                        GrossAmount = COND #( WHEN so-GrossAmount IS INITIAL THEN '0.00' ELSE so-GrossAmount ) ) ).
+
+  ENDMETHOD.
+
+ENDCLASS.
