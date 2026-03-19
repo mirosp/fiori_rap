@@ -9,6 +9,6 @@ Creation SEGW(tcode) project. OData version 2.
    
 1. Create project (OData service).
 
-    ![SEGW create](../exercises/ex01/images/segw_create.png)
+    ![SEGW create](../ex01/images/segw_create.png)
 
 
