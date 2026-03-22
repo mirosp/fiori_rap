@@ -7,7 +7,7 @@ Creation SEGW(tcode) project. OData version 2.
 <details>
   <summary>🔵 Click to expand!</summary>
    
-1. Create project (OData service).
+1. Create project (OData service). ZFIODEMO_SO_xx
 
     ![SEGW create](../ex01/images/segw_create.png)
 
