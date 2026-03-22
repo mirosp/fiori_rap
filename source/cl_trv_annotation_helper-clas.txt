@@ -1,0 +1,2887 @@
+class CL_TRV_ANNOTATION_HELPER definition
+  public
+  final
+  create public .
+
+public section.
+
+  types:
+    BEGIN OF ty_data_field_with_path,
+        name            TYPE string,
+        label           TYPE string,
+        annotation_path TYPE string,
+      END OF ty_data_field_with_path .
+  types:
+    BEGIN OF ty_data_fc_property,
+        data_property TYPE string,
+        fc_property   TYPE string,
+      END OF ty_data_fc_property .
+  types:
+    BEGIN OF ty_data_field_action,
+        action      TYPE string,
+        label       TYPE string,
+        label_path  TYPE string,
+        determining TYPE boolean,
+        inline      TYPE boolean,
+        icon_url    TYPE string,
+        criticality TYPE string,
+        importance  TYPE string,
+      END OF ty_data_field_action .
+  types:
+    BEGIN OF ty_data_field,
+        name             TYPE string,
+        label            TYPE string,
+        criticality_path TYPE string,
+      END OF ty_data_field .
+  types:
+    BEGIN OF ty_property,
+        name TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_entity_name,
+      END OF ty_property .
+  types:
+    tt_data_fields TYPE TABLE OF ty_data_field WITH KEY name .
+  types:
+    tt_data_fields_with_path TYPE TABLE OF ty_data_field_with_path WITH KEY name .
+  types:
+    tt_data_fields_actions  TYPE TABLE OF ty_data_field_action WITH KEY action .
+  types:
+    tt_data_fc_properties TYPE TABLE OF ty_data_fc_property WITH KEY data_property .
+  types:
+    tt_properties TYPE TABLE OF ty_property WITH KEY name .
+
+  class-methods FORMAT_DATE
+    importing
+      !IV_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_SINGLE_FIELD type BOOLEAN optional
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods FILTER_RESTRICTION_INTERVAL
+    importing
+      !IV_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IS_MULTI_LINE_TEXT
+    importing
+      !IV_NAMESPACE type STRING
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    changing
+      !CO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  class-methods IS_TECHNICAL
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_QUICK_VIEW_FACETS
+    importing
+      !IV_LABEL_FIELD_GROUP type STRING optional
+      !IV_ANNOTATION_TARGET_FG type STRING optional
+      !IV_LABEL_LINE_ITEMS type STRING optional
+      !IV_ANNOTATION_TARGET_LINE_ITEM type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IGNORE_TECHNICAL_FIELDS
+    importing
+      !TT_FIELDS type TT_PROPERTIES
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IS_TECHNICAL_FILTER
+    importing
+      !IV_NAMESPACE type STRING
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    changing
+      !CO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  methods ADD_INOUT_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER .
+  class-methods ADD_DEFAULT_FILTER_VALUE
+    importing
+      !IV_NAMESPACE type STRING
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_BOOL_VALUE type BOOLEAN optional
+      !IV_STRING_VALUE type STRING optional
+    changing
+      !CO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  methods ADD_IN_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER .
+  methods ADD_DISPLAY_PARAMETER
+    importing
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER .
+  methods ADD_OUT_PARAMETER
+    importing
+      !IV_PROPERTY type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER .
+  class-methods CREATE_DATA_FIELD
+    importing
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_TEXT_ELEMENT_SYMBOL_LABEL type TEXTPOOLKY optional
+      !IV_DATA_FIELD_PATH type STRINGVAL
+      !IV_LABEL type STRINGVAL optional
+      !IV_CRITICALITY_PATH type STRINGVAL optional
+    changing
+      !IO_VOCAN_ITEM type ref to /IWBEP/IF_MGW_VOCAN_ITEM
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_DATA_FIELD_FOR_ACTION
+    importing
+      !IV_ACTION_NAME type STRINGVAL
+      !IV_LABEL type STRINGVAL optional
+      !IV_LABEL_PATH type STRING optional
+      !IV_TEXT_ELEMENT_SYMBOL_LABEL type TEXTPOOLKY optional
+      !IV_DETERMINING type BOOLEAN optional
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_INLINE type BOOLEAN optional
+      !IV_IMPORTANCE type STRING optional
+      !IV_ICON_URL type STRING optional
+      !IV_CRITICALITY type STRING optional
+    changing
+      !IO_VOCAN_ITEM type ref to /IWBEP/IF_MGW_VOCAN_ITEM
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_DATA_FIELD_FOR_ANNOTAT
+    importing
+      !IV_ANNOTATION_PATH type STRINGVAL
+      !IV_LABEL type STRINGVAL optional
+      !I_TEXT_CONTAINER_NAME type STRING optional
+      !I_TEXT_SYMBOL_NAME type TEXTPOOLKY optional
+    changing
+      !IO_VOCAN_ITEM type ref to /IWBEP/IF_MGW_VOCAN_ITEM .
+  class-methods CREATE_DATA_FIELD_WITH_PATH
+    importing
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_TEXT_ELEMENT_SYMBOL_LABEL type TEXTPOOLKY optional
+      !IV_ANNOTATION_PATH type STRINGVAL
+      !IV_LABEL type STRINGVAL optional
+      !IV_VALUE type STRINGVAL optional
+    changing
+      !IO_VOCAN_ITEM type ref to /IWBEP/IF_MGW_VOCAN_ITEM
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_DATA_POINT
+    importing
+      !IV_TITLE type STRING optional
+      !IV_DESCRIPTION type STRING optional
+      !IV_PROPERTY_NAME type STRING
+      !IV_TEXT_ELEMENT_SYMBOL_TITLE type TEXTPOOLKY optional
+      !IV_QUALIFIER type STRING
+      !IV_TEXT_ELEMENT_SYMBOL_DESCR type TEXTPOOLKY optional
+      !IV_CRITICALITY_PATH type STRING optional
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_HEADER_INFO
+    importing
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_TITLE_PROPERTY type STRING
+      !IV_DESCRIPTION_PROPERTY type STRING optional
+      !IV_TEXT_ELEMENT_SYMBOL_TPNAMEP type TEXTPOOLKY optional
+      !IV_TEXT_ELEMENT_SYMBOL_TPNAME type TEXTPOOLKY optional
+      !IV_TYPE_NAME type STRING optional
+      !IV_TYPE_NAME_PLURAL type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_SIDE_EFFECTS
+    importing
+      !IT_DATA_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS
+      !IV_QUALIFIER type STRINGVAL
+      !IT_TARGET_ENTITIES type CL_TRV_ANNOTATION_HELPER=>TT_PROPERTIES optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  class-methods CREATE_FIELD_GROUP
+    importing
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IT_DATA_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS
+      !IT_DATA_FIELDS_ACTION type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS_ACTIONS optional
+      !IT_DATA_FIELDS_FOR_ANNOTATIONS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS optional
+      !IT_DATA_FIELDS_WITH_PATH type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS_WITH_PATH optional
+      !IV_QUALIFIER type STRINGVAL
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_LINE_ITEM
+    importing
+      !IT_DATA_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS
+      !IT_DATA_FIELDS_ACTION type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS_ACTIONS optional
+      !IV_CRITICALITY_PATH type STRING optional
+      !IV_QUALIFIER type STRING optional
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_PRESENTATION_VARIANT
+    importing
+      !IT_REQUEST_AT_LEAST_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS optional
+      !IV_TARGET_NAME_FOR_LINE_ITEM type STRING optional
+      !IV_QUALIFIER type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  class-methods CREATE_INSERT_RESTRICTIONS
+    importing
+      !IT_DATA_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS
+      !IV_PROPERTY_REF type STRING
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  class-methods CREATE_REFERENCE_FACET
+    importing
+      !IV_HIDDEN_PATH type STRING optional
+      !IV_IMPORTANCE type STRING optional
+      !IV_TARGET_NAME type STRING
+      !IV_ID type STRING
+      !IV_LABEL type STRING optional
+      !IV_CRITICALITY_PATH type STRING optional
+      !IV_TEXT_ELEMENT_SYMBOL type TEXTPOOLKY optional
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+    changing
+      !IO_COLLECTION type ref to /IWBEP/IF_MGW_VOCAN_COLLECTION
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_SEARCH_RESTRICTIONS
+    importing
+      !IV_PROPERTY type BOOLEAN
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET .
+  class-methods CREATE_STATUS_INFO
+    importing
+      !IT_DATA_FIELDS type CL_TRV_ANNOTATION_HELPER=>TT_DATA_FIELDS
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_VALUE_LIST
+    importing
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_ENTITYTYPE type CHAR40
+      !IV_PROPERTY type STRING
+      !IV_SEARCH_HELP type SHLPNAME optional
+      !IV_SEARCH_SUPPORTED type ABAP_BOOL optional
+      !IV_SEARCH_HELP_FIELD type FIELDNAME optional
+      !IV_QUALIFIER type STRING optional
+      !IV_LANGUAGE_DEPENDENT_LABELS type ABAP_BOOL optional
+      !IV_LABEL type CSEQUENCE optional
+      !IV_VALUELIST_ENTITYSET type STRING
+      !IV_VALUELIST_PROPERTY type STRING
+      !IV_VALUELIST_SERVICE_NAME type /IWBEP/MED_GRP_TECHNICAL_NAME optional
+      !IV_VALUELIST_SERVICE_VERSION type /IWBEP/MED_GRP_VERSION default 1
+      !IV_VALUELIST_DEFAULT_TEXT type STRING optional
+    exporting
+      !EV_PROPERTY_ANNOTATION type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IS_DATE
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IS_NUMC
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods IS_UPPERCASE
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADD_SH_IN_COSTASSIGNMENT
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADD_VALUE_LIST_FOR_CURRENCIES
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_ENTITYTYPE type CHAR40
+      !IV_PROPERTY type STRING
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADD_SH_IN_DESTINATION
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADD_FIELD_CONTROLS
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !TT_DATA_FC_PROPERTIES type TT_DATA_FC_PROPERTIES optional
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods DEFINE_ADVANCE_ANNOTATIONS
+    importing
+      !IV_NAMESPACE type STRING
+    changing
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods DEFINE_CONTACT_ANNOTATIONS
+    importing
+      !IV_NAMESPACE type STRING
+    changing
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL .
+  class-methods DEFINE_COST_ASSIGN_ANNOTATIONS
+    importing
+      !IV_NAMESPACE type STRING
+    changing
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods DEFINE_DESTINATION_ANNOTATIONS
+    importing
+      !IV_NAMESPACE type STRING
+    changing
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods CREATE_IDENTIFICATION
+    importing
+      !IV_ACTION_NAME type STRING
+      !IV_LABEL type STRING optional
+      !IV_DETERMINING type ABAP_BOOL optional
+      !IV_TEXT_ELEMENT_SYMBOL_LABEL type TEXTPOOLKY optional
+      !IV_ICON_URL type STRING optional
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_CRITICALITY_PATH type STRING optional
+      !IV_IMPORTANCE type STRING optional
+    changing
+      !IO_ANN_TARGET type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods ADD_SH_IN_ADVANCE
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+protected section.
+private section.
+
+  data MO_PARAMETERS type ref to /IWBEP/IF_MGW_VOCAN_COLLECTION .
+  class-data SV_DATA_ELEMENT_TEXT type ABAP_BOOL .
+
+  class-methods CREATE_ONE
+    importing
+      !IO_ODATA_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IO_VOCAN_MODEL type ref to /IWBEP/IF_MGW_VOCAN_MODEL
+      !IV_NAMESPACE type STRING
+      !IV_ENTITYTYPE type CHAR40
+      !IV_PROPERTY type STRING
+      !IV_QUALIFIER type STRING
+      !IV_LABEL type CSEQUENCE
+      !IV_TEXT_ELEMENT_CONTAINER_NAME type STRING optional
+      !IV_VALUE_LIST_TYPE type CHAR1
+      !IV_VALUELIST_ENTITYTYPE type /IWBEP/MED_EXTERNAL_NAME
+      !IV_VALUELIST_ENTITYSET type STRING
+      !IV_VALUELIST_SERVICE_NAME type /IWBEP/MED_GRP_TECHNICAL_NAME
+      !IV_VALUELIST_SERVICE_VERSION type /IWBEP/MED_GRP_VERSION default 1
+      !IV_SEARCH_SUPPORTED type ABAP_BOOL
+    exporting
+      !EV_PROPERTY_ANNOTATION type ref to /IWBEP/IF_MGW_VOCAN_ANN_TARGET
+    returning
+      value(RO_ANNOTATION) type ref to CL_TRV_ANNOTATION_HELPER
+    raising
+      /IWBEP/CX_MGW_MED_EXCEPTION .
+  class-methods SET_FIELD_CONTROL
+    importing
+      !IO_MODEL type ref to /IWBEP/IF_MGW_ODATA_MODEL
+      !IV_ENTITY_TYPE type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_PROPERTY type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_ENTITY_NAME
+      !IV_FC_PROPERTY type /IWBEP/MED_ANNOTATION_VALUE .
+ENDCLASS.
+
+
+
+CLASS CL_TRV_ANNOTATION_HELPER IMPLEMENTATION.
+
+
+  METHOD add_default_filter_value.
+    co_ann_target  = io_vocan_model->create_annotations_target( iv_target = iv_namespace  && '.' && iv_entity_type && '/' && iv_property )   ##NO_TEXT.
+    IF iv_bool_value IS SUPPLIED.
+      co_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.FilterDefaultValue' )->create_simple_value( )->set_boolean( iv_value = iv_bool_value ).
+    ENDIF.
+    IF iv_string_value IS SUPPLIED.
+      co_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.FilterDefaultValue' )->create_simple_value( )->set_string( iv_value = iv_string_value ).
+    ENDIF.
+
+  ENDMETHOD.
+
+
+ METHOD add_display_parameter.
+   DATA:
+     lo_record TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+   lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly' ).
+   lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+   ro_annotation = me.
+ ENDMETHOD.
+
+
+  METHOD add_field_controls.
+
+    DATA: lt_properties       TYPE /iwbep/if_mgw_med_odata_types=>ty_t_mgw_odata_properties,
+          ls_property         TYPE /iwbep/if_mgw_med_odata_types=>ty_s_mgw_odata_property,
+          lv_property         TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_entity_name,
+          ls_data_fc_property TYPE LINE OF tt_data_fc_properties,
+          lv_fc_property      TYPE /iwbep/med_annotation_value.
+
+
+    lt_properties = io_model->get_entity_type( iv_entity_type )->get_properties( ).
+
+    LOOP AT lt_properties INTO ls_property.
+      DATA: len type i,
+            propertyname type string.
+      propertyname = ls_property-external_name.
+      translate propertyname to upper case.
+      len = strlen( propertyname ) - 2.
+      if len >= 0 and propertyname+len(2) = 'FC'.
+        lv_property = ls_property-external_name(len).
+        lv_fc_property = ls_property-external_name.
+        set_field_control(
+          EXPORTING
+            io_model       =   io_model
+            iv_entity_type =  iv_entity_type
+            iv_property    =  lv_property
+            iv_fc_property =  lv_fc_property
+        ).
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT tt_data_fc_properties INTO ls_data_fc_property. "Additionaly properties to map
+      lv_property = ls_data_fc_property-data_property.
+      lv_fc_property = ls_data_fc_property-fc_property.
+      set_field_control(
+        EXPORTING
+          io_model       =   io_model
+          iv_entity_type =  iv_entity_type
+          iv_property    =  lv_property
+          iv_fc_property =  lv_fc_property
+      ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+  METHOD add_inout_parameter.
+    DATA:
+      lo_record TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterInOut' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  ENDMETHOD.
+
+
+  method add_in_parameter.
+    data:
+      lo_record type ref to /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterIn' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  endmethod.
+
+
+  METHOD add_out_parameter.
+    DATA:
+  lo_record TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+    lo_record = mo_parameters->create_record( 'com.sap.vocabularies.Common.v1.ValueListParameterOut' ).
+    lo_record->create_property( 'LocalDataProperty' )->create_simple_value( )->set_property_path( iv_property ).
+    lo_record->create_property( 'ValueListProperty' )->create_simple_value( )->set_string( iv_valuelist_property ).
+
+    ro_annotation = me.
+  ENDMETHOD.
+
+
+  method ADD_SH_IN_ADVANCE.
+
+    "Value List for Currencies
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Advance'
+      iv_property            = 'PayCurr'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'Currencies'
+      iv_valuelist_property = 'FCurrency'
+      )->add_in_parameter(
+          iv_property            = 'Pernr'
+          iv_valuelist_property  = 'Pernr'
+      )->add_in_parameter(
+          iv_property            = 'AdvNumber'
+          iv_valuelist_property  = 'AdvNumber'
+      )->add_in_parameter(
+          iv_property            = 'Tripno'
+          iv_valuelist_property  = 'Tripno'
+      )->add_display_parameter(
+          iv_valuelist_property  = 'Currtxt'
+      )    ##NO_TEXT.
+
+  endmethod.
+
+
+METHOD add_sh_in_costassignment.
+
+  "Search Help for Accounting Object - Combobox
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Fieldgroup'
+      iv_search_supported    = abap_false
+      iv_valuelist_entityset = 'AccountingObjects'
+      iv_valuelist_property = 'FieldGroup'
+     )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+      )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+      )->add_display_parameter( iv_valuelist_property = 'FieldGroupDescription').
+
+  "Search Help for Activity SH_Activity
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Activity'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_Activities'
+      iv_valuelist_property = 'Vornr'
+      )->add_in_parameter(                       "GLW note 3285548
+      iv_property           = 'Network'
+      iv_valuelist_property =  'Aufnr'
+     )->add_out_parameter(
+          iv_property            = 'Network'
+          iv_valuelist_property  = 'Aufnr'
+       )->add_display_parameter(
+             iv_valuelist_property  = 'Ltxa1'
+     ).
+
+  "Search Help for Business Area SH_BusinessArea
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'BusArea'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_BusinessAreas'
+      iv_valuelist_property = 'Gsber'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Gtext'
+     ).
+
+    "GSE and STR: Adding text to SH to get txt+id display
+    DATA(lo_annotation) = io_odata_model->get_entity_type( 'SH_BusinessArea' )->get_property( 'Gsber' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+     iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+   )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-text
+      iv_value =  'Gtext'
+    ).
+    lo_annotation = io_odata_model->get_entity_type( 'CostAssignment' )->get_property( 'BusArea' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+     iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+   )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-text
+      iv_value =  'BusAreaName'
+    ).
+    "Then define Text annotation
+    "DATA: lo_voca_annotation           TYPE REF TO /iwbep/if_mgw_vocan_annotation.
+    DATA(io_ann_target) = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'SH_BusinessArea/Gsber' )  ##NO_TEXT.
+    DATA(annot) = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.Text' ) ##NO_TEXT.
+    annot->create_simple_value( )->set_path( 'Gtext'  ) ##NO_TEXT.
+    annot->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.TextArrangement' )->create_simple_value( )->SET_ENUM_MEMBER_BY_NAME( 'com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly' ).
+
+    io_ann_target = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'CostAssignment/BusArea' )  ##NO_TEXT.
+    annot = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.Text' ) ##NO_TEXT.
+    annot->create_simple_value( )->set_path( 'BusAreaName' ) ##NO_TEXT.
+    annot->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.TextArrangement' )->create_simple_value( )->SET_ENUM_MEMBER_BY_NAME( 'com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly' ).
+
+
+
+
+  "Search Help for Company Codes based on Info types
+  cl_trv_annotation_helper=>create_value_list(
+    io_odata_model         = io_odata_model
+    io_vocan_model         = io_vocan_model
+    iv_namespace           = iv_namespace
+    iv_entitytype          = 'CostAssignment'
+    iv_property            = 'CompCode'
+    iv_search_supported    = abap_true
+    iv_label = '037'
+    iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+    iv_valuelist_entityset = 'CompanyCodes'
+    iv_valuelist_property = 'CompanyCode'
+   )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+   )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyName'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyPlace'
+   ).
+
+  "Search Help Generic for Company Code SH_Companycode
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'CompCode'
+      iv_search_supported    = abap_true
+      iv_label =  '034'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_qualifier = 'SH_CompCodes'
+      iv_valuelist_entityset = 'SH_CompanyCodes'
+      iv_valuelist_property = 'Bukrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Butxt'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ort01'
+     ).
+
+  "Search Help for Company Code SH_Companycode in Cost Center  SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenter'
+      iv_property            = 'Bukrs'
+      iv_search_supported    = abap_true
+      iv_label = '037'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+    iv_valuelist_entityset = 'CompanyCodes'
+    iv_valuelist_property = 'CompanyCode'
+   )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+   )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyName'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyPlace'
+   ).
+
+  "Search Help for Company Code SH_Companycode in Cost Center  SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenter'
+      iv_property            = 'Bukrs'
+      iv_search_supported    = abap_true
+       iv_qualifier = 'SH_CompCodes'
+      iv_label = '034'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_CompanyCodes'
+      iv_valuelist_property = 'Bukrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Butxt'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ort01'
+     ).
+
+  "Search Help for Company Code SH_Companycode in Cost Center  SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenterName'
+      iv_property            = 'Bukrs'
+      iv_search_supported    = abap_true
+      iv_label =  '037'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+    iv_valuelist_entityset = 'CompanyCodes'
+    iv_valuelist_property = 'CompanyCode'
+   )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+   )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyName'
+   )->add_display_parameter(
+         iv_valuelist_property  = 'CompanyPlace'
+   ).
+
+  "Search Help for Company Code SH_Companycode in Cost Center  SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenterName'
+      iv_property            = 'Bukrs'
+      iv_search_supported    = abap_true
+       iv_qualifier = 'SH_CompCodes'
+      iv_label = '034'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_CompanyCodes'
+      iv_valuelist_property = 'Bukrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Butxt'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ort01'
+     ).
+
+  "Search Help for Controlling Area SH_ControllingArea
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'CoArea'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_ControllingAreas'
+      iv_valuelist_property = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezei'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Waers'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktopl'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Lmona'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Khinr'
+     ).
+
+  "Search Help for Controlling Area SH_ControllingArea in cost Center SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenter'
+      iv_property            = 'Kokrs'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_ControllingAreas'
+      iv_valuelist_property = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezei'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Waers'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktopl'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Lmona'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Khinr'
+     ).
+
+  "Search Help for Controlling Area SH_ControllingArea in cost Center SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_CostCenterName'
+      iv_property            = 'Kokrs'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_ControllingAreas'
+      iv_valuelist_property = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezei'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Waers'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktopl'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Lmona'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Khinr'
+     ).
+
+  "Search Help for Controlling Area SH_ControllingArea in cost Center SH
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_Order'
+      iv_property            = 'Kokrs'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_ControllingAreas'
+      iv_valuelist_property = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezei'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Waers'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktopl'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Lmona'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Khinr'
+     ).
+
+  "Search Help for Last used Cost Center SH_LUCostCenter
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Costcenter'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_LUCostCenters'
+      iv_label = '019'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'Kostl'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Kokrs'
+     )->add_inout_parameter( "GSE[3304840]
+           iv_property            = 'CompCode'
+           iv_valuelist_property  = 'Bukrs'
+     ).
+
+  "Search Help for Cost Center SH_CostCenter
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Costcenter'
+      iv_search_supported    = abap_true
+      iv_qualifier = 'KOSTN'
+      iv_label = '021'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_CostCenters'
+      iv_valuelist_property = 'Kostl'
+     )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+   )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+   )->add_display_parameter(
+           iv_valuelist_property  = 'Kokrs'
+     )->add_inout_parameter( "GSE[3304840]
+           iv_property            = 'CompCode'
+           iv_valuelist_property  = 'Bukrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Mctxt'
+     ).
+
+  "Search Help for Cost Center SH_CostCenterName
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Costcenter'
+      iv_qualifier            = 'KOSTS'
+      iv_search_supported    = abap_true
+      iv_label = '020'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_CostCenterNames'
+      iv_valuelist_property = 'Kostl'
+     )->add_in_parameter(
+      iv_property           = 'Tripno'
+      iv_valuelist_property = 'Tripno'
+   )->add_in_parameter(
+      iv_property           = 'Pernr'
+      iv_valuelist_property =  'Pernr'
+   )->add_display_parameter(
+           iv_valuelist_property  = 'Kokrs'
+     )->add_inout_parameter( "GSE[3304840]
+           iv_property            = 'CompCode'
+           iv_valuelist_property  = 'Bukrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Mctxt'
+     ).
+
+  "Search Help for Last used Network SH_LUNetwork
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Network'
+      iv_qualifier            = ''
+      iv_search_supported    = abap_true
+      iv_label = '027'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_LUNetworks'
+      iv_valuelist_property = 'Aufnr'
+       )->add_out_parameter(
+            iv_property            = 'Activity'
+           iv_valuelist_property  = 'Vornr'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktext'
+     ).
+
+  "Search Help for Network SH_Network
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Network'
+      iv_qualifier            = 'AUKOB'
+      iv_search_supported    = abap_true
+      iv_label = '028'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_Networks'
+      iv_valuelist_property = 'Aufnr'
+       )->add_out_parameter(
+            iv_property            = 'Activity'
+            iv_valuelist_property  = 'Vornr'
+     )->add_display_parameter(
+            iv_valuelist_property  = 'Ktext'
+       ).
+
+  "Search Help for Last used Orders SH_LUOrder
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Order'
+      iv_search_supported    = abap_true
+      iv_label = '030'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_LUOrders'
+      iv_valuelist_property = 'Aufnr'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktext'
+     ).
+
+  "Search Help for Order SH_Order
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Order'
+      iv_qualifier            = 'ORDEB'
+      iv_search_supported    = abap_true
+      iv_label = '031'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_entityset = 'SH_Orders'
+      iv_valuelist_property = 'Aufnr'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Kokrs'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktext'
+     ).
+
+  "Search Help for Order Type SH_OrderType
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'SH_Order'
+      iv_property            = 'Auart'
+      iv_qualifier            = ''
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_OrderTypes'
+      iv_valuelist_property = 'Auart'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Autyp'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Txt'
+     ).
+
+  "Search Help for Last used Sales Order SH_LUSalesOrder
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'SalesOrd'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_LUSalesOrders'
+      iv_label = '023'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'Vbeln'
+     )->add_out_parameter(
+          iv_property            = 'SOrdItem'
+          iv_valuelist_property  = 'Kdpos'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktext'
+                                 ).
+
+  "Search Help for Sales Order SH_SalesOrderItem
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'SalesOrd'
+      iv_search_supported    = abap_true
+      iv_qualifier            = 'VMVAB'
+      iv_valuelist_entityset = 'SH_LUSalesOrders'
+      iv_label = '024'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'Vbeln'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Vkorg'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Ktext'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Auart'
+     )->add_out_parameter(
+          iv_property            = 'SalesOrd'
+          iv_valuelist_property  = 'Vbeln'
+     ).
+
+* begin of Note[2860876]
+    "Search Help for Sales Order SH_SalesOrderItem
+    cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = io_odata_model
+        io_vocan_model         = io_vocan_model
+        iv_namespace           = iv_namespace
+        iv_entitytype          = 'CostAssignment'
+        iv_property            = 'SalesOrd'
+        iv_search_supported    = abap_true
+        iv_qualifier            = 'VMVAB'
+        iv_valuelist_entityset = 'SH_SalesOrderItemDocuments'
+        iv_label = '024'
+        iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+        iv_valuelist_property = 'Vbeln'
+       )->add_display_parameter(
+             iv_valuelist_property  = 'Arktx'
+       )->add_out_parameter(
+            iv_property            = 'SOrdItem'
+            iv_valuelist_property  = 'Posnr'
+       ).
+    "Search Help for Sales Order SH_SalesOrderItem
+    cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = io_odata_model
+        io_vocan_model         = io_vocan_model
+        iv_namespace           = iv_namespace
+        iv_entitytype          = 'CostAssignment'
+        iv_property            = 'SOrdItem'
+        iv_search_supported    = abap_true
+        iv_valuelist_entityset = 'SH_SalesOrderItemDocuments'
+        iv_label = '024'
+        iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+        iv_valuelist_property = 'Posnr'
+       )->add_display_parameter(
+             iv_valuelist_property  = 'Arktx'
+       )->add_out_parameter(
+            iv_property            = 'SalesOrd'
+            iv_valuelist_property  = 'Vbeln'
+       ).
+* end of Note[2860876]
+
+  "Search Help for Last used WBS Element SH_LUWBSElement
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'WbsElemt'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_LUWBSElements'
+      iv_label = '025'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'Posid'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Post1'
+     ).
+
+  "Search Help for  WBS Element SH_WBSElement
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'WbsElemt'
+      iv_search_supported    = abap_true
+      iv_qualifier            = 'VMVAB'
+      iv_valuelist_entityset = 'SH_WBSElements'
+      iv_label = '026'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'Posid'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Poski'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Post1'
+     ).
+
+  "SEARCH HELPS for Fund Management
+
+  "Search Help for Commitment Item SH_CommitmentItem
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'CmmtItemLong'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_CommitmentItems'
+      iv_valuelist_property = 'ExternalKey'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Fikrs'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Bezei'
+     ).
+
+  "Search Help for Functional Area SH_FuncArea
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'FuncArea'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_FuncAreas'
+      iv_valuelist_property = 'ExternalKey'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     ).
+
+  "Search Help for FundArea SH_Fund
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'Fund'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_Funds'
+      iv_valuelist_property = 'ExternalKey'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Fikrs'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezeich'
+     ).
+
+  "Search Help for Funds center SH_FundsCenter
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'FundsCtr'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_FundsCenters'
+      iv_valuelist_property = 'ExternalKey'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Fikrs'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'Bezeich'
+     ).
+
+  "Search Help for Grants SH_Grant
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'GrantNbr'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_Grants'
+      iv_valuelist_property = 'ExternalKey'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'CompanyCode'
+     ).
+
+  "Search Help for CProcject External ID ProjectExtId
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'ProjectExtId'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'CProjects'
+      iv_label = '029'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'ProjectExtId'
+     )->add_out_parameter(
+          iv_property            = 'ProjectGuid'
+          iv_valuelist_property  = 'ProjectGuid'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'ProjectExtIdName'
+     )->add_out_parameter(
+          iv_property            = 'TaskRoleExtId'
+          iv_valuelist_property  = 'TaskRoleExtId'
+     )->add_out_parameter(
+           iv_property            = 'TaskRoleGuid'
+           iv_valuelist_property  = 'TaskRoleGuid'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'TaskRoleExtIdName'
+     )->add_out_parameter(
+           iv_property            = 'ObjectType'
+           iv_valuelist_property  = 'ObjectType'
+     ).
+
+  "Search Help for CProcject Task External ID TaskRoleExtId
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'CostAssignment'
+      iv_property            = 'TaskRoleExtId'
+      iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'CProjects'
+      iv_label = '029'
+      iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+      iv_valuelist_property = 'TaskRoleExtId'
+     )->add_out_parameter(
+          iv_property            = 'ProjectExtId'
+          iv_valuelist_property  = 'ProjectExtId'
+     )->add_out_parameter(
+          iv_property            = 'ProjectGuid'
+          iv_valuelist_property  = 'ProjectGuid'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'ProjectExtIdName'
+     )->add_out_parameter(
+           iv_property            = 'TaskRoleGuid'
+           iv_valuelist_property  = 'TaskRoleGuid'
+     )->add_display_parameter(
+           iv_valuelist_property  = 'TaskRoleExtIdName'
+     )->add_out_parameter(
+           iv_property            = 'ObjectType'
+           iv_valuelist_property  = 'ObjectType'
+     ).
+
+    "GSE[2891302] Adding FMArea search help in SH_CommitmentItems
+    cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = io_odata_model
+        io_vocan_model         = io_vocan_model
+        iv_namespace           = iv_namespace
+        iv_entitytype          = 'SH_CommitmentItem'
+        iv_property            = 'Fikrs'
+        iv_search_supported    = abap_true
+        iv_valuelist_entityset = 'SH_FMAreas'
+        iv_valuelist_property  = 'FMArea'
+       )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     ).
+
+    "GSE[2891302] Adding FMArea search help in SH_Fund
+        cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = io_odata_model
+        io_vocan_model         = io_vocan_model
+        iv_namespace           = iv_namespace
+        iv_entitytype          = 'SH_Fund'
+        iv_property            = 'Fikrs'
+        iv_search_supported    = abap_true
+        iv_valuelist_entityset = 'SH_FMAreas'
+        iv_valuelist_property  = 'FMArea'
+       )->add_display_parameter(
+           iv_valuelist_property  = 'Description'
+     ).
+
+    "DATA: lo_annotation                  TYPE REF TO /iwbep/if_mgw_odata_annotation.
+    lo_annotation = io_odata_model->get_entity_type( 'SH_CommitmentItem' )->get_property( 'Fikrs' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'required-in-filter'
+      iv_value =  'true'
+    ).
+
+
+
+
+
+
+ENDMETHOD.
+
+
+METHOD add_sh_in_destination.
+  DATA lv_text TYPE string.
+
+  "Value list for Country Region Name
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Destination'
+      iv_property            = 'CountryRegionName'
+       iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_CountryRegions'
+      iv_valuelist_property = 'Text25'
+     )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+     )->add_out_parameter(
+          iv_property            = 'Country'
+          iv_valuelist_property  = 'Land1'
+     )->add_out_parameter(
+            iv_property            = 'Countryadr'
+            iv_valuelist_property  = 'Land1'
+     )->add_out_parameter(
+          iv_property            = 'Region'
+          iv_valuelist_property  = 'Rgion'
+                                 ).
+
+  "Value list for Country Adr - required ?
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Destination'
+      iv_property            = 'Countryadr'
+       iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_CountryRegions'
+      iv_valuelist_property = 'Text25'
+     )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+     )->add_out_parameter(
+          iv_property            = 'Country'
+          iv_valuelist_property  = 'Land1'
+     )->add_out_parameter(
+          iv_property            = 'Countryadr'
+          iv_valuelist_property  = 'Land1'
+     )->add_out_parameter(
+          iv_property            = 'Region'
+          iv_valuelist_property  = 'Rgion'
+                                 ).
+
+  " Value list for Communities - City Code
+  lv_text = text-029.
+  cl_trv_annotation_helper=>create_value_list(
+         io_odata_model         = io_odata_model
+         io_vocan_model         = io_vocan_model
+         iv_namespace           = iv_namespace
+         iv_entitytype          = 'Destination'
+         iv_property            = 'CityCodeadr'
+         iv_search_supported    = abap_true
+         iv_valuelist_entityset = 'SH_Communities'
+         iv_valuelist_property = 'CityCode'
+         iv_label = '029' "City Code'
+         iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+        )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+         )->add_out_parameter(
+             iv_property            = 'PostCodeadr'
+             iv_valuelist_property  = 'Postalcode'
+        )->add_out_parameter(
+             iv_property            = 'Cityadr'
+             iv_valuelist_property  = 'City'
+        )->add_out_parameter(
+             iv_property            = 'CityDistrictadr'
+             iv_valuelist_property  = 'District'
+        ).
+
+  " Value list for Recurring destinations - City Field
+  lv_text = text-017.
+  cl_trv_annotation_helper=>create_value_list(
+         io_odata_model         = io_odata_model
+         io_vocan_model         = io_vocan_model
+         iv_namespace           = iv_namespace
+         iv_entitytype          = 'Destination'
+         iv_property            = 'Cityadr'
+          iv_search_supported    = abap_true
+         iv_valuelist_entityset = 'RecurringDestinations'
+         iv_valuelist_property = 'Cityadr'
+         iv_label = '017' "Recurring Destinations'
+         iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+        )->add_in_parameter(
+          iv_property            = 'Pernr'
+          iv_valuelist_property  = 'Pernr'
+        )->add_out_parameter(
+             iv_property            = 'PostCodeadr'
+             iv_valuelist_property  = 'PostCodeadr'
+        )->add_out_parameter(
+             iv_property            = 'HouseNumadr'
+             iv_valuelist_property  = 'HouseNumadr'
+        )->add_out_parameter(
+             iv_property            = 'Streetadr'
+             iv_valuelist_property  = 'Streetadr'
+        )->add_out_parameter(
+             iv_property            = 'Country'
+             iv_valuelist_property  = 'Countryadr'
+        )->add_out_parameter(
+               iv_property            = 'CountryRegionName'
+               iv_valuelist_property  = 'Countrytxt'
+        )->add_out_parameter(
+               iv_property            = 'Region'
+               iv_valuelist_property  = 'Region'
+        )->add_out_parameter(
+             iv_property            = 'Countryadr'
+             iv_valuelist_property  = 'Countryadr'
+        )->add_out_parameter(
+             iv_property            = 'Regionadr'
+             iv_valuelist_property  = 'Regionadr'
+        ).
+
+  " value list for Predefined Addresses
+  lv_text = text-016.
+  cl_trv_annotation_helper=>create_value_list(
+       io_odata_model         = io_odata_model
+       io_vocan_model         = io_vocan_model
+       iv_namespace           = iv_namespace
+       iv_entitytype          = 'Destination'
+       iv_property            = 'Cityadr'
+       iv_search_supported    = abap_true
+       iv_qualifier           = 'Predefined'
+       iv_label = '016' "Predefined Addresses'
+       iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'
+       iv_valuelist_entityset = 'PredefinedAddresses'
+       iv_valuelist_property = 'City'
+      )->add_display_parameter(
+           iv_valuelist_property  = 'AddressName'
+      )->add_out_parameter(
+           iv_property            = 'PostCodeadr'
+           iv_valuelist_property  = 'PostCode'
+      )->add_out_parameter(
+           iv_property            = 'HouseNumadr'
+           iv_valuelist_property  = 'HouseNum'
+      )->add_out_parameter(
+           iv_property            = 'Streetadr'
+           iv_valuelist_property  = 'Street'
+      )->add_out_parameter(
+           iv_property            = 'Country'            "Note [2798238]
+           iv_valuelist_property  = 'Country'            "Note [2798238]
+      )->add_out_parameter(
+           iv_property            = 'Regionadr'
+           iv_valuelist_property  = 'Region'
+      )->add_out_parameter(
+           iv_property            = 'CountryRegionName'  "Note [2798238]
+           iv_valuelist_property  = 'CountryName'        "Note [2798238]
+      ).
+
+  " value list for Predefined Category
+  cl_trv_annotation_helper=>create_value_list(
+       io_odata_model         = io_odata_model
+       io_vocan_model         = io_vocan_model
+       iv_namespace           = iv_namespace
+       iv_entitytype          = 'PredefinedAddress'
+       iv_property            = 'Category'
+       iv_search_supported    = abap_true
+       iv_valuelist_entityset = 'PredefinedCategories'
+       iv_valuelist_property = 'Category'
+      )->add_display_parameter( iv_valuelist_property =  'CategoryName' ).
+
+  "Value list for Trip type Statutory
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Destination'
+      iv_property            = 'TtStatuName'
+       iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_StatutoryTypes'
+      iv_valuelist_property = 'Retxt'
+     )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+     )->add_out_parameter(
+          iv_property            = 'TtStatu'
+          iv_valuelist_property  = 'Kzrea'
+                                 ).
+
+  "Value list for Enterprise Specific
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Destination'
+      iv_property            = 'TtComspName'
+       iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_EnterpriseSpecificTypes'
+      iv_valuelist_property = 'Text25'
+     )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+"     )->add_display_parameter(
+"           iv_valuelist_property  = 'TtComstxt'
+     )->add_out_parameter(
+          iv_property            = 'TtComsp'
+          iv_valuelist_property  = 'Berei'
+                                 ).
+
+  "Value list for PlanActivityType
+  "GSE: this is not common for MTE and MTR. Will be solely in MTR
+*  cl_trv_annotation_helper=>create_value_list(
+*      io_odata_model         = io_odata_model
+*      io_vocan_model         = io_vocan_model
+*      iv_namespace           = iv_namespace
+*      iv_entitytype          = 'Destination'
+*      iv_property            = 'PlanActivityTypeName' " old = PlanActivityType
+*       iv_search_supported    = abap_true
+*      iv_valuelist_entityset = 'ActivitiesPlanning'  " old = ActivitiesPlanning
+*      iv_valuelist_property = 'Name'   " old = Acticity
+*     )->add_display_parameter(
+*      iv_valuelist_property  = 'Acticity'      " old = Name Acticity
+*     )->add_out_parameter(
+*          iv_property            = 'PlanActivityType'
+*          iv_valuelist_property  = 'Acticity'
+*                                 ).
+
+  "Value list for Trip Activity Type
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = 'Destination'
+      iv_property            = 'TActypeName'
+       iv_search_supported    = abap_true
+      iv_valuelist_entityset = 'SH_TripActivityTypes'
+      iv_valuelist_property = 'Tktxt'
+     )->add_in_parameter(
+          iv_property            = 'Morei'
+          iv_valuelist_property  = 'Morei'
+ "    )->add_display_parameter(
+ "         iv_valuelist_property  = 'Kztkt'
+     )->add_out_parameter(     "OCA
+          iv_property            = 'TActype'
+          iv_valuelist_property  = 'Kztkt'
+                                 ).
+
+
+ENDMETHOD.
+
+
+METHOD add_value_list_for_currencies.
+
+  "Value List for Currencies
+  cl_trv_annotation_helper=>create_value_list(
+      io_odata_model         = io_odata_model
+      io_vocan_model         = io_vocan_model
+      iv_namespace           = iv_namespace
+      iv_entitytype          = iv_entitytype
+      iv_property            = iv_property
+        iv_search_supported    = abap_true
+        iv_valuelist_entityset = 'Currencies'
+        iv_valuelist_property = 'FCurrency'
+        )->add_in_parameter(
+            iv_property            = 'Pernr'
+            iv_valuelist_property  = 'Pernr'
+        )->add_display_parameter(
+             iv_valuelist_property  = 'Currtxt'
+       )       ##NO_TEXT.
+
+ENDMETHOD.
+
+
+METHOD create_data_field.
+
+  DATA: lo_record         TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_collection( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataField')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_property( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataField')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+
+  lo_property_value = lo_record->create_property( 'Value' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_path( iv_data_field_path ).
+
+  IF iv_label IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_label ).
+  ENDIF.
+
+  "Note[2791278] - Multi Language support
+  IF iv_text_element_container_name IS SUPPLIED AND iv_text_element_symbol_label IS SUPPLIED AND iv_text_element_symbol_label IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element(
+      EXPORTING
+        iv_text_element_symbol         =   iv_text_element_symbol_label  " Text element key (number/selection name)
+        iv_text_element_container_name =   iv_text_element_container_name  " The class/report with text elements
+    ).
+*      CATCH /iwbep/cx_mgw_med_exception.    "
+  ENDIF.
+
+  IF iv_criticality_path IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Criticality' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_path( iv_criticality_path ).
+    lo_property_value = lo_record->create_property( 'CriticalityRepresentation' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_enum_member_by_name( 'UI.CriticalityRepresentationType/WithoutIcon' ).
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD create_data_field_for_action.
+
+  DATA: lo_record         TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_collection( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldForAction')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_property( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldForAction')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+
+  lo_property_value = lo_record->create_property( 'Action' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_string( iv_action_name ).
+
+    "IF iv_label IS NOT INITIAL.
+    IF iv_text_element_container_name IS NOT SUPPLIED AND iv_label IS NOT INITIAL. "Note[2886129]
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_label ).
+  ENDIF.
+
+  "Note[2791278] - Multi Languages support
+  IF iv_text_element_symbol_label IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED AND iv_label_path IS INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_symbol = iv_text_element_symbol_label
+                                                                                       iv_text_element_container_name = iv_text_element_container_name ).
+  ENDIF.
+
+  IF iv_label_path IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_path( iv_label_path ).
+  ENDIF.
+
+  IF iv_icon_url IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'IconUrl' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_path( iv_icon_url ).
+  ENDIF.
+
+  "Determining - final Action ?
+  lo_property_value = lo_record->create_property( 'Determining' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_boolean( iv_determining ).
+
+  "Inline mode
+  lo_property_value = lo_record->create_property( 'Inline' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_boolean( iv_inline ).
+
+  IF iv_criticality IS NOT INITIAL.
+    "Criticality
+    lo_property_value = lo_record->create_property( 'Criticality' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_enum_member_by_name( iv_criticality ).
+  ENDIF.
+
+  IF iv_importance IS NOT INITIAL.
+    lo_record->create_annotation( iv_term = 'UI.Importance' )->create_simple_value( )->set_enum_member_by_name( iv_importance )   ##NO_TEXT.
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD create_data_field_for_annotat.
+
+  DATA: lo_record         TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_collection( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldForAnnotation')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_property( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldForAnnotation')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+
+  lo_property_value = lo_record->create_property( 'Target' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_annotation_path( iv_annotation_path ).
+
+*  IF iv_label IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    IF iv_label IS NOT INITIAL.
+      lo_property_value->create_simple_value( )->set_string( iv_label ).
+    ELSEIF i_text_container_name IS NOT INITIAL AND i_text_symbol_name IS NOT INITIAL.
+      TRY.
+          lo_property_value->create_simple_value( )->set_string_from_text_element(     "GLW note 2838520
+            EXPORTING
+              iv_text_element_symbol         =   i_text_symbol_name  " Text element key (number/selection name)
+              iv_text_element_container_name =   i_text_container_name ). " The class/report with text elements
+        CATCH /iwbep/cx_mgw_med_exception.
+      ENDTRY.
+    ENDIF.
+*  ENDIF.
+ENDMETHOD.
+
+
+METHOD create_data_field_with_path.
+
+  DATA: lo_record         TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_collection( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+  TRY.
+      lo_record = CAST /iwbep/if_mgw_vocan_property( io_vocan_item )->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath')   ##NO_TEXT.
+    CATCH cx_sy_move_cast_error.
+  ENDTRY.
+
+  lo_property_value = lo_record->create_property( 'Target' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_annotation_path( iv_annotation_path ).
+
+  IF iv_value IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Value' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_path( iv_value ).
+  ENDIF.
+  IF iv_label IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_label ).
+  ENDIF.
+
+  "Note[2791278]
+  IF iv_text_element_container_name IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element(
+      EXPORTING
+        iv_text_element_symbol         = iv_text_element_symbol_label    " Text element key (number/selection name)
+        iv_text_element_container_name = iv_text_element_container_name    " The class/report with text elements
+    ).
+*      CATCH /iwbep/cx_mgw_med_exception.    "
+  ENDIF.
+ENDMETHOD.
+
+
+METHOD create_data_point.
+
+  DATA: lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value  TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.DataPoint' iv_qualifier = iv_qualifier )   ##NO_TEXT.
+  lo_record = lo_voca_annotation->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataPointType' )   ##NO_TEXT.
+
+  IF iv_title IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Title' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_title ).
+  ENDIF.
+  IF iv_description IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Description' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_description ).
+  ENDIF.
+
+  "Note[2791278] Multi Languages support
+  IF iv_text_element_symbol_title IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED.
+    lo_property_value = lo_record->create_property( 'Title' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                        iv_text_element_symbol = iv_text_element_symbol_title ).
+  ENDIF.
+
+  IF iv_text_element_symbol_descr IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED.
+    lo_property_value = lo_record->create_property( 'Description' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                       iv_text_element_symbol = iv_text_element_symbol_descr ).
+
+  ENDIF.
+
+  lo_property_value = lo_record->create_property( 'Value' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_path( iv_property_name ).
+  IF iv_criticality_path IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( 'Criticality' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_path( iv_criticality_path ).
+    lo_property_value = lo_record->create_property( 'CriticalityRepresentation' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_enum_member_by_name( 'UI.CriticalityRepresentationType/WithoutIcon' ).
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD create_field_group.
+
+  DATA: ls_data_field        TYPE cl_trv_annotation_helper=>ty_data_field,
+        ls_data_field_with_path TYPE cl_trv_annotation_helper=>ty_data_field_with_path,
+        ls_data_field_action    TYPE cl_trv_annotation_helper=>ty_data_field_action,
+        lo_voca_annotation   TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lo_record            TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value    TYPE REF TO /iwbep/if_mgw_vocan_property,
+        lv_text_element_symbol_label TYPE  textpoolky,
+        lo_vocan_item                TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+  lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.FieldGroup' iv_qualifier = iv_qualifier )   ##NO_TEXT.
+  lo_record = lo_voca_annotation->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.FieldGroupType' )   ##NO_TEXT.
+  lo_property_value = lo_record->create_property( 'Data' )    ##NO_TEXT.
+  lo_vocan_item = lo_property_value->create_collection( ).
+
+
+  LOOP AT it_data_fields_with_path INTO ls_data_field_with_path.
+    IF iv_text_element_container_name IS SUPPLIED.
+      lv_text_element_symbol_label = ls_data_field_with_path-label.
+      cl_trv_annotation_helper=>create_data_field_with_path( EXPORTING iv_annotation_path = ls_data_field_with_path-annotation_path  iv_text_element_symbol_label = lv_text_element_symbol_label iv_text_element_container_name =
+iv_text_element_container_name iv_value =
+ls_data_field_with_path-name CHANGING
+io_vocan_item = lo_vocan_item
+).
+    ELSE.
+      cl_trv_annotation_helper=>create_data_field_with_path( EXPORTING iv_annotation_path = ls_data_field_with_path-annotation_path  iv_label = ls_data_field_with_path-label iv_value = ls_data_field_with_path-name CHANGING io_vocan_item = lo_vocan_item ).
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT it_data_fields INTO ls_data_field.
+    IF iv_text_element_container_name IS SUPPLIED.
+      lv_text_element_symbol_label = ls_data_field-label.
+      cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = ls_data_field-name iv_text_element_symbol_label = lv_text_element_symbol_label iv_text_element_container_name = iv_text_element_container_name   iv_criticality_path =
+  ls_data_field-criticality_path CHANGING io_vocan_item =  lo_vocan_item ).
+    ELSE.
+      cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = ls_data_field-name iv_label = ls_data_field-label iv_criticality_path = ls_data_field-criticality_path
+          CHANGING io_vocan_item = lo_vocan_item ).
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT it_data_fields_for_annotations INTO ls_data_field.
+      IF iv_text_element_container_name IS SUPPLIED.
+        lv_text_element_symbol_label = ls_data_field-label.
+        cl_trv_annotation_helper=>create_data_field_for_annotat( EXPORTING iv_annotation_path = 'Contact/@vCard.Contact' i_text_symbol_name = lv_text_element_symbol_label i_text_container_name = iv_text_element_container_name
+                                                                 CHANGING io_vocan_item = lo_vocan_item ).  "GLW note 2838520
+      ELSE.
+         cl_trv_annotation_helper=>create_data_field_for_annotat( EXPORTING iv_annotation_path = 'Contact/@vCard.Contact' iv_label = ls_data_field-label
+                                                                 CHANGING io_vocan_item = lo_vocan_item ).  "GLW note 2838520
+      ENDIF.
+  ENDLOOP.
+
+  LOOP AT it_data_fields_action INTO ls_data_field_action.
+    IF iv_text_element_container_name IS SUPPLIED.
+      lv_text_element_symbol_label = ls_data_field_action-label.
+      cl_trv_annotation_helper=>create_data_field_for_action( EXPORTING iv_action_name = ls_data_field_action-action iv_label = ls_data_field_action-label iv_label_path = ls_data_field_action-label_path
+         iv_text_element_symbol_label = lv_text_element_symbol_label iv_text_element_container_name = iv_text_element_container_name iv_determining = ls_data_field_action-determining iv_inline = ls_data_field_action-inline  CHANGING io_vocan_item =
+ lo_vocan_item ).
+    ELSE.
+      cl_trv_annotation_helper=>create_data_field_for_action( EXPORTING iv_action_name = ls_data_field_action-action iv_label = ls_data_field_action-label iv_label_path = ls_data_field_action-label_path
+     iv_determining = ls_data_field_action-determining iv_inline = ls_data_field_action-inline  CHANGING io_vocan_item = lo_vocan_item ).
+    ENDIF.
+  ENDLOOP.
+
+
+ENDMETHOD.
+
+
+METHOD create_header_info.
+
+  DATA: lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_voca_property   TYPE REF TO /iwbep/if_mgw_vocan_property,
+        lo_vocan_item      TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+  lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.HeaderInfo' )   ##NO_TEXT.
+  lo_record = lo_voca_annotation->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.HeaderInfoType' )   ##NO_TEXT.
+  lo_vocan_item = lo_record->create_property( 'Title' )    ##NO_TEXT.
+  cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = iv_title_property CHANGING io_vocan_item = lo_vocan_item ).
+
+  IF iv_description_property IS SUPPLIED.
+    lo_vocan_item = lo_record->create_property( 'Description' )    ##NO_TEXT.
+    cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = iv_description_property CHANGING io_vocan_item = lo_vocan_item ).
+  ENDIF.
+
+  IF iv_type_name IS SUPPLIED.
+    lo_voca_property = lo_record->create_property( 'TypeName' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string( iv_value = iv_type_name ).
+  ENDIF.
+  IF iv_type_name_plural IS SUPPLIED.
+    lo_voca_property = lo_record->create_property( 'TypeNamePlural' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string( iv_value = iv_type_name_plural ).
+  ENDIF.
+
+  "Note[2791278] Multi Languages support
+  IF iv_text_element_symbol_tpname IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED.
+    lo_voca_property = lo_record->create_property( 'TypeName' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                        iv_text_element_symbol = iv_text_element_symbol_tpname ).
+
+  ENDIF.
+  IF iv_text_element_symbol_tpnamep IS SUPPLIED AND iv_text_element_container_name IS SUPPLIED.
+    lo_voca_property = lo_record->create_property( 'TypeNamePlural' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                        iv_text_element_symbol = iv_text_element_symbol_tpnamep ).
+  ENDIF.
+
+ENDMETHOD.
+
+
+METHOD create_identification.
+
+  DATA: lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lo_voca_collection TYPE REF TO /iwbep/if_mgw_vocan_collection,
+        lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_voca_property   TYPE REF TO /iwbep/if_mgw_vocan_property,
+        lo_vocan_item      TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+  lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Identification' )   ##NO_TEXT.
+  lo_voca_collection = lo_voca_annotation->create_collection( ).
+  lo_record = lo_voca_collection->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.DataFieldForAction' )   ##NO_TEXT.
+  lo_voca_property = lo_record->create_property( 'Action' )    ##NO_TEXT.
+  lo_voca_property->create_simple_value( )->set_string( iv_value =  iv_action_name ).
+
+  IF iv_label IS SUPPLIED AND iv_label IS NOT INITIAL.
+    lo_voca_property = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string( iv_value =  iv_label ).
+  ENDIF.
+
+  "Note[2791278] - Multi languages support
+  IF iv_text_element_container_name IS SUPPLIED AND iv_text_element_symbol_label IS SUPPLIED.
+    lo_voca_property = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string_from_text_element(
+      EXPORTING
+        iv_text_element_symbol         =   iv_text_element_symbol_label  " Text element key (number/selection name)
+        iv_text_element_container_name =   iv_text_element_container_name   " The class/report with text elements
+    ).
+*      CATCH /iwbep/cx_mgw_med_exception.    "
+  ENDIF.
+
+  IF iv_icon_url IS SUPPLIED AND iv_icon_url IS NOT INITIAL.
+    lo_voca_property = lo_record->create_property( 'IconUrl' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_string( iv_value =  iv_icon_url ).
+  ENDIF.
+
+  IF iv_criticality_path IS NOT INITIAL.
+    "Criticality
+    lo_voca_property = lo_record->create_property( 'Criticality' )    ##NO_TEXT.
+    lo_voca_property->create_simple_value( )->set_enum_member_by_name( iv_criticality_path ).
+  ENDIF.
+
+  lo_voca_property = lo_record->create_property( 'Determining' )    ##NO_TEXT.
+  lo_voca_property->create_simple_value( )->set_boolean( EXPORTING iv_value = iv_determining  ).
+
+  IF iv_importance IS NOT INITIAL.
+    lo_record->create_annotation( iv_term = 'UI.Importance' )->create_simple_value( )->set_enum_member_by_name( iv_importance )   ##NO_TEXT.
+  ENDIF.
+
+ENDMETHOD.
+
+
+  METHOD create_insert_restrictions.
+
+    DATA: ls_data_field      TYPE cl_trv_annotation_helper=>ty_data_field,
+          lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection.
+
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.InsertRestrictions' ).
+    lo_record = lo_voca_annotation->create_record( ).
+    lo_record->create_property( iv_property_name = 'Insertable' )->create_simple_value( )->set_path( iv_value = iv_property_ref ).
+    lo_collection = lo_record->create_property( iv_property_name = 'NonInsertableNavigationProperties' )->create_collection( ).
+    LOOP AT it_data_fields INTO ls_data_field.
+      lo_collection->create_simple_value( )->set_nav_property_path( iv_value = ls_data_field-name ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+METHOD create_line_item.
+
+  DATA: ls_data_field        TYPE cl_trv_annotation_helper=>ty_data_field,
+        ls_data_field_action TYPE cl_trv_annotation_helper=>ty_data_field_action,
+        lo_voca_annotation   TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lv_text_element_symbol_label TYPE  textpoolky,
+        lo_vocan_item                TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+  IF iv_qualifier IS INITIAL.
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.LineItem'   )   ##NO_TEXT.
+  ELSE.
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.LineItem' iv_qualifier = iv_qualifier  )   ##NO_TEXT.
+  ENDIF.
+
+  IF iv_criticality_path IS NOT INITIAL.
+    lo_voca_annotation->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Criticality' )->create_simple_value( )->set_path( iv_criticality_path  ).
+  ENDIF.
+
+  lo_vocan_item = lo_voca_annotation->create_collection( ).
+
+  LOOP AT it_data_fields INTO ls_data_field.
+    IF iv_text_element_container_name IS SUPPLIED.
+      lv_text_element_symbol_label =  ls_data_field-label.
+      cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = ls_data_field-name iv_text_element_symbol_label = lv_text_element_symbol_label iv_text_element_container_name = iv_text_element_container_name  iv_criticality_path =
+                                                  ls_data_field-criticality_path CHANGING io_vocan_item = lo_vocan_item ).
+    ELSE.
+      cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = ls_data_field-name iv_label = ls_data_field-label iv_criticality_path = ls_data_field-criticality_path CHANGING io_vocan_item = lo_vocan_item ).
+    ENDIF.
+  ENDLOOP.
+
+  LOOP AT it_data_fields_action INTO ls_data_field_action.
+    IF iv_text_element_container_name IS SUPPLIED.
+      lv_text_element_symbol_label =  ls_data_field_action-label.
+      cl_trv_annotation_helper=>create_data_field_for_action( EXPORTING iv_action_name = ls_data_field_action-action iv_label = ls_data_field_action-label iv_text_element_symbol_label = lv_text_element_symbol_label iv_text_element_container_name =
+  iv_text_element_container_name
+          iv_determining = ls_data_field_action-determining iv_inline = ls_data_field_action-inline iv_icon_url = ls_data_field_action-icon_url iv_criticality = ls_data_field_action-criticality iv_importance = ls_data_field_action-importance CHANGING
+  io_vocan_item = lo_vocan_item ).
+    ELSE.
+      cl_trv_annotation_helper=>create_data_field_for_action( EXPORTING iv_action_name = ls_data_field_action-action iv_label = ls_data_field_action-label iv_text_element_symbol_label = lv_text_element_symbol_label
+          iv_determining = ls_data_field_action-determining iv_inline = ls_data_field_action-inline iv_icon_url = ls_data_field_action-icon_url iv_criticality = ls_data_field_action-criticality iv_importance = ls_data_field_action-importance CHANGING
+  io_vocan_item = lo_vocan_item ).
+    ENDIF.
+  ENDLOOP.
+
+ENDMETHOD.
+
+
+   METHOD create_one.
+     DATA:
+       lo_ann_target TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+       lo_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+       lv_text_element_symbol_label TYPE  textpoolky,
+       lo_record                    TYPE REF TO /iwbep/if_mgw_vocan_record.
+
+     " should have used builder pattern and passed this and the two models to constructor of builder
+*    if sv_namespace is initial.                             "Note 2181616
+*      sv_namespace = iv_namespace.                          "Note 2181616
+*      io_odata_model->set_schema_namespace( sv_namespace ). "Note 2181616
+*    endif.                                                  "Note 2181616
+     io_odata_model->set_schema_namespace( iv_namespace ).  "Note 2181616
+
+     DATA: lv_entitytype TYPE /iwbep/med_external_name, "Filter 20.05.15
+           lv_property   TYPE /iwbep/med_external_name. "Filter 20.05.15
+
+     MOVE: iv_entitytype TO lv_entitytype, "Filter 20.05.15
+           iv_property   TO lv_property.   "Filter 20.05.15
+
+*    CHECK text_method_is_available( ) = abap_true.
+
+     TRY.
+         DATA(lo_property) = io_odata_model->get_entity_type( lv_entitytype )->get_property( lv_property ). "Filter 20.05.15
+         lo_property->set_value_list( iv_value_list_type = iv_value_list_type ). "Filter 20.05.15
+       CATCH /iwbep/cx_mgw_med_exception.
+     ENDTRY.
+
+     TRY.
+         DATA(lo_complex_type_property) = io_odata_model->get_complex_type( lv_entitytype )->get_property( lv_property )."Filter 20.05.15
+         lo_complex_type_property->set_value_list( iv_value_list_type = iv_value_list_type ).                            "Filter 20.05.15
+       CATCH /iwbep/cx_mgw_med_exception.
+     ENDTRY.
+     DATA(lv_target) = iv_namespace && '.' && iv_entitytype && '/' && iv_property.
+
+
+     lo_ann_target = io_vocan_model->create_annotations_target(
+                       iv_target = iv_namespace && '.' && iv_entitytype && '/' && iv_property
+                       iv_qualifier = iv_qualifier ).
+     lo_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.ValueList' ).
+
+     IF iv_valuelist_entitytype IS NOT INITIAL.                            "Filter 20.05.15
+       lo_annotation->set_value_list_et_name( iv_valuelist_entitytype ).   "Filter 20.05.15
+     ENDIF.
+
+     lo_record = lo_annotation->create_record( ).
+
+*    IF iv_label IS NOT INITIAL.  "GLW note: comment and move down. Either one or the other. But not both.
+*      lo_record->create_property( 'Label' )->create_simple_value( )->set_string( iv_label && `` )        ##NO_TEXT.
+*    ENDIF.
+
+     "Note[2791278]
+     IF iv_text_element_container_name IS SUPPLIED AND iv_label IS NOT INITIAL AND iv_text_element_container_name IS NOT INITIAL.
+       lv_text_element_symbol_label = iv_label .
+       lo_record->create_property( 'Label' )->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                                              iv_text_element_symbol = lv_text_element_symbol_label  )        ##NO_TEXT.
+    ELSE.
+      IF iv_label IS NOT INITIAL.  "GLW note 2843251
+        lo_record->create_property( 'Label' )->create_simple_value( )->set_string( iv_label && `` )        ##NO_TEXT.
+      ENDIF.
+     ENDIF.
+
+     lo_record->create_property( 'CollectionPath' )->create_simple_value( )->set_string( iv_valuelist_entityset ).
+    lo_record->create_property( 'FetchValues' )->create_simple_value( )->set_integer( 1 ). "GSE[2915322]
+
+     IF iv_valuelist_service_name IS NOT INITIAL.
+       DATA(lv_path) = `../..`.
+       IF iv_valuelist_service_name(1) <> '/'.
+         lv_path = lv_path && '/sap/'.
+       ENDIF.
+       lv_path = lv_path && iv_valuelist_service_name.
+       IF iv_valuelist_service_version <> 1.
+         lv_path = lv_path && |;v={ iv_valuelist_service_version ALPHA = OUT WIDTH = 1 }|.
+       ENDIF.
+       lv_path = lv_path && '/'.
+       lo_record->create_property( 'CollectionRoot' )->create_simple_value( )->set_string( lv_path ).
+     ENDIF.
+
+     IF iv_search_supported = abap_true.
+       lo_record->create_property( 'SearchSupported' )->create_simple_value( )->set_boolean( abap_true ).
+     ENDIF.
+
+     "GSE[3229258] need property annotation to add further annotations than value list
+     ev_property_annotation = lo_ann_target.
+
+     CREATE OBJECT ro_annotation.
+     ro_annotation->mo_parameters = lo_record->create_property( 'Parameters' )->create_collection( )      ##NO_TEXT.
+
+   ENDMETHOD.
+
+
+  METHOD create_presentation_variant.
+
+    DATA: ls_data_field      TYPE cl_trv_annotation_helper=>ty_data_field,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_property_value  TYPE REF TO /iwbep/if_mgw_vocan_property,
+          lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection.
+
+    IF iv_qualifier IS INITIAL.
+      lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.PresentationVariant' )   ##NO_TEXT.
+    ELSE.
+      lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.PresentationVariant' iv_qualifier = iv_qualifier )   ##NO_TEXT.
+    ENDIF.
+    lo_record = lo_voca_annotation->create_record( ).
+
+    IF it_request_at_least_fields IS NOT INITIAL.
+    lo_property_value = lo_record->create_property( iv_property_name = 'RequestAtLeast' ).
+    lo_collection = lo_property_value->create_collection( ).
+
+    LOOP AT it_request_at_least_fields INTO ls_data_field.
+      lo_collection->create_simple_value( )->set_property_path( ls_data_field-name )   ##NO_TEXT.
+    ENDLOOP.
+    ENDIF.
+
+    IF iv_target_name_for_line_item IS NOT INITIAL.
+      lo_property_value = lo_record->create_property( iv_property_name = 'Visualizations' ).
+      lo_collection = lo_property_value->create_collection( ).
+      lo_collection->create_simple_value( )->set_annotation_path( iv_value = iv_target_name_for_line_item ).
+    ENDIF.
+  ENDMETHOD.
+
+
+  METHOD create_quick_view_facets.
+
+    DATA:
+      lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+      lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection.
+
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.QuickViewFacets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+
+*    "Reference Facet for <UI.FieldGroup> with the qualifier <QuickView>
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_id = 'FieldGroupQuickView' iv_label = iv_label_field_group iv_target_name = '@UI.FieldGroup#QuickView' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+*
+*    Optionally, it may contain another <UI.ReferenceFacet> pointing to the <UI.LineItem> annotation with the qualifier <QuickView>
+    IF iv_annotation_target_line_item IS NOT INITIAL.
+      cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_id = 'LineItemsQuickView' iv_label = iv_label_line_items iv_target_name = iv_annotation_target_line_item CHANGING io_collection = lo_collection )   ##NO_TEXT.
+    ENDIF.
+
+  ENDMETHOD.
+
+
+METHOD create_reference_facet.
+
+  DATA: lo_record         TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value TYPE REF TO /iwbep/if_mgw_vocan_property.
+
+  lo_record = io_collection->create_record( iv_record_type = 'com.sap.vocabularies.UI.v1.ReferenceFacet')   ##NO_TEXT.
+  IF iv_importance IS NOT INITIAL.
+    lo_record->create_annotation( iv_term = 'UI.Importance' )->create_simple_value( )->set_enum_member_by_name( iv_importance )   ##NO_TEXT.
+  ENDIF.
+  IF iv_hidden_path IS NOT INITIAL.
+    lo_record->create_annotation( iv_term = 'UI.Hidden' )->create_simple_value( )->set_path( iv_hidden_path )   ##NO_TEXT.
+  ENDIF.
+  IF iv_criticality_path IS NOT INITIAL.
+    lo_record->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Criticality' )->create_simple_value( )->set_path( iv_criticality_path ).
+    ENDIF.
+
+  lo_property_value = lo_record->create_property( 'Target' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_annotation_path( iv_target_name ).
+
+  IF iv_label IS SUPPLIED.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string( iv_label ).
+  ENDIF.
+
+  "Note[2791278] Multi Languages support
+  IF iv_text_element_container_name IS SUPPLIED AND iv_text_element_symbol IS SUPPLIED.
+    lo_property_value = lo_record->create_property( 'Label' )    ##NO_TEXT.
+    lo_property_value->create_simple_value( )->set_string_from_text_element( EXPORTING iv_text_element_container_name = iv_text_element_container_name
+                                                                                       iv_text_element_symbol = iv_text_element_symbol ).
+  ENDIF.
+
+  lo_property_value = lo_record->create_property( 'ID' )    ##NO_TEXT.
+  lo_property_value->create_simple_value( )->set_string( iv_id ).
+
+ENDMETHOD.
+
+
+  method CREATE_SEARCH_RESTRICTIONS.
+
+    DATA: ls_data_field      TYPE cl_trv_annotation_helper=>ty_data_field,
+          lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation.
+
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.SearchRestrictions' ).
+    lo_record = lo_voca_annotation->create_record( ).
+    lo_record->create_property( iv_property_name = 'Searchable' )->create_simple_value( )->set_boolean( iv_value = iv_property ).
+
+  endmethod.
+
+
+METHOD create_side_effects.
+
+  DATA: ls_data_field      TYPE cl_trv_annotation_helper=>ty_data_field,
+        ls_property        TYPE cl_trv_annotation_helper=>ty_property,
+        lv_nav_property    TYPE string,
+        lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+        lo_record          TYPE REF TO /iwbep/if_mgw_vocan_record,
+        lo_property_value  TYPE REF TO /iwbep/if_mgw_vocan_property,
+        lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection,
+        lo_vocan_item      TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+  lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.Common.v1.SideEffects' iv_qualifier = iv_qualifier )   ##NO_TEXT.
+  lo_record = lo_voca_annotation->create_record( iv_record_type = 'com.sap.vocabularies.Common.v1.SideEffectsType' )   ##NO_TEXT.
+  lo_property_value = lo_record->create_property( 'SourceProperties' )    ##NO_TEXT.
+  lo_collection  = lo_property_value->create_collection( ).
+
+  LOOP AT it_data_fields INTO ls_data_field.
+    lo_collection->create_simple_value( )->set_property_path( iv_value = ls_data_field-name ).
+  ENDLOOP.
+
+  lo_property_value = lo_record->create_property( 'TargetEntities' )    ##NO_TEXT.
+  lo_collection  = lo_property_value->create_collection( ).
+
+  "NavigationPropertyPath
+  LOOP AT it_target_entities INTO ls_property.
+    lv_nav_property = ls_property-name.
+    lo_collection->create_simple_value( )->set_nav_property_path( iv_value = lv_nav_property ).
+  ENDLOOP.
+
+ENDMETHOD.
+
+
+  METHOD create_status_info.
+
+    DATA: ls_data_field      TYPE cl_trv_annotation_helper=>ty_data_field,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_vocan_item      TYPE REF TO /iwbep/if_mgw_vocan_item.
+
+    lo_voca_annotation = io_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.StatusInfo'   )   ##NO_TEXT.
+    lo_vocan_item = lo_voca_annotation->create_collection( ).
+
+    LOOP AT it_data_fields INTO ls_data_field.
+      cl_trv_annotation_helper=>create_data_field( EXPORTING iv_data_field_path = ls_data_field-name iv_label = ls_data_field-label iv_criticality_path = ls_data_field-criticality_path CHANGING io_vocan_item = lo_vocan_item ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+
+METHOD create_value_list.
+  DATA:
+    ls_search_help              TYPE shlp_descr_t,
+    lv_search_supported         TYPE abap_bool,
+    lv_valuelist_entitytype     TYPE /iwbep/med_external_name,
+    lv_value_list_type_property TYPE /iwbep/mgw_med_prop_value_list VALUE 'S',
+    lv_label                    TYPE string.
+  DATA lo_entity_type            TYPE REF TO /iwbep/if_mgw_odata_entity_typ."Note 2304243
+
+  IF iv_search_help IS NOT INITIAL.
+    CALL FUNCTION 'F4IF_GET_SHLP_DESCR'
+      EXPORTING
+        shlpname = iv_search_help
+      IMPORTING
+        shlp     = ls_search_help.
+    IF ls_search_help-intdescr-issimple = abap_false.
+*      RAISE EXCEPTION TYPE cx_fis_error
+*        EXPORTING
+*          textid   = cx_fis_error=>invalid_search_help
+*          shlpname = iv_search_help.
+    ENDIF.
+    lv_search_supported = ls_search_help-intdescr-autosuggest.
+  ELSE.
+    lv_search_supported = iv_search_supported.
+  ENDIF.
+
+  IF iv_label IS SUPPLIED.
+    lv_label = iv_label.
+  ELSE.
+    lv_label = ls_search_help-intdescr-ddtext.
+  ENDIF.
+
+*  move iv_valuelist_entityset to lv_valuelist_entitytype.                                                        "Note 2304243
+*    lv_valuelist_entitytype = substring( val = iv_valuelist_entityset len = strlen( iv_valuelist_entityset ) - 3 ). "Note 2304243
+*    TRY.                                                                                                            "Note 2304243
+*        lo_entity_type = io_odata_model->get_entity_type( iv_entity_name = lv_valuelist_entitytype ).             "Note 2304243
+*        lo_entity_type->set_is_value_list( abap_true ).                                                           "Note 2304243
+*      CATCH /iwbep/cx_mgw_med_exception.                                                                          "Note 2304243
+*    ENDTRY.                                                                                                         "Note 2304243
+
+  DATA: lv_entity_set      TYPE /iwbep/med_external_name,
+        lv_entitytype_name TYPE /iwbep/med_external_name.
+  MOVE iv_valuelist_entityset TO lv_entity_set.
+  TRY.                                                                                                            "Note 2304243
+      DATA(lt_entity_set) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_entity_sets( ).
+      DATA(lt_types) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_entity_types( ).                                                                                               "Note 2304243
+      DATA(lt_complex_types) = CAST /iwbep/if_mgw_odata_re_model( io_odata_model )->get_complex_types( ).
+      IF lines( lt_complex_types ) GT 0.
+        APPEND LINES OF lt_complex_types TO lt_types.
+      ENDIF.
+
+      LOOP AT lt_entity_set INTO DATA(ls_entity_set) WHERE name = lv_entity_set.
+        READ TABLE lt_types INTO DATA(ls_entity) WITH KEY entity_id = ls_entity_set-target_entity_id.
+        IF sy-subrc = 0.
+          MOVE ls_entity-name TO lv_entitytype_name.
+          lo_entity_type = io_odata_model->get_entity_type( iv_entity_name = lv_entitytype_name ).
+          lo_entity_type->set_is_value_list( abap_true ).
+          MOVE ls_entity-name TO lv_valuelist_entitytype.
+          CONTINUE.
+        ENDIF.
+      ENDLOOP.
+
+      IF lv_valuelist_entitytype IS INITIAL.
+        MOVE iv_valuelist_entityset TO lv_valuelist_entitytype.
+        lo_entity_type = io_odata_model->get_entity_type( iv_entity_name = lv_valuelist_entitytype ).
+        lo_entity_type->set_is_value_list( abap_true ).
+      ENDIF.
+    CATCH /iwbep/cx_mgw_med_exception.
+  ENDTRY.
+
+*  IF lv_valuelist_entitytype(6) = cl_fis_shlp_annotation=>gc_fv.
+*    lv_value_list_type_property = 'F'. "Fix-values
+*  ENDIF.
+* check if data_element_text_method is available
+ " text_method_is_available( ).
+
+ " set_label_from_text_element( iv_language_dependent_labels ).
+
+  ro_annotation = create_one( exporting io_odata_model               = io_odata_model
+                              io_vocan_model               = io_vocan_model
+                              iv_namespace                 = iv_namespace
+                              iv_entitytype                = iv_entitytype
+                              iv_property                  = iv_property
+                              iv_qualifier                 = iv_qualifier
+                              iv_valuelist_entityset       = iv_valuelist_entityset
+                              iv_valuelist_service_name    = iv_valuelist_service_name
+                              iv_valuelist_service_version = iv_valuelist_service_version
+                              iv_label                     = lv_label
+                              iv_text_element_container_name = iv_text_element_container_name
+                              iv_value_list_type           = lv_value_list_type_property
+                              iv_valuelist_entitytype      = lv_valuelist_entitytype
+                              iv_search_supported          = lv_search_supported
+                              IMPORTING ev_property_annotation = ev_property_annotation ).
+
+  ro_annotation->add_inout_parameter(
+    iv_property           = iv_property
+    iv_valuelist_property = iv_valuelist_property
+  ).
+
+ENDMETHOD.
+
+
+  METHOD define_advance_annotations.
+    DATA: lo_ann_target      TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection,
+          lv_typenameplural  TYPE string,
+          lv_typename        TYPE string,
+          lv_text            TYPE string.
+
+    lo_ann_target = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'Advance' )   ##NO_TEXT.
+
+    "Deletable Path for Advance Entity
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.DeleteRestrictions'   )   ##NO_TEXT.
+    lo_voca_annotation->create_record( )->create_property( iv_property_name = 'Deletable' )->create_simple_value( )->set_path( iv_value = 'Deletable' ).
+
+    "Update Restrictions
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.UpdateRestrictions'   )   ##NO_TEXT.
+    lo_voca_annotation->create_record( )->create_property( iv_property_name = 'Updatable' )->create_simple_value( )->set_boolean( iv_value = abap_true ).
+
+* Define which columns should be displayed for Advances
+    DATA(it_data_fields) = VALUE cl_trv_annotation_helper=>tt_data_fields(
+      ( name = `AdvNumber` )
+      ( name = `AdvAmount` )
+      ( name = `ExchRate` )
+      ( name = `PayAmount` label = '018' )
+      ( name = `Cash` label = '002' )
+      ( name = `PayDate` ) )   ##NO_TEXT.
+    cl_trv_annotation_helper=>create_line_item( EXPORTING it_data_fields = it_data_fields iv_criticality_path = 'Criticality' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'  CHANGING io_ann_target = lo_ann_target ).
+
+* Define Header data which should be displayed in the Object Page header
+    " Title
+    "lv_typenameplural = text-033.
+    "lv_typename = text-058.
+    cl_trv_annotation_helper=>create_header_info( EXPORTING iv_title_property = `AdvNumber` iv_text_element_symbol_tpname = '058' iv_text_element_symbol_tpnamep = '033' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' CHANGING
+io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+* Define object page sections
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Facets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+*
+    "Advances Details
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+      ( name = `AdvAmount` )
+      ( name = `ExchRate` )
+      ( name = `PayAmount` label = '018' )
+      ( name = `Cash` label = '002' )
+      ( name = `PayDate` ) )   ##NO_TEXT.
+    cl_trv_annotation_helper=>create_field_group( EXPORTING iv_qualifier = 'Advance' it_data_fields = it_data_fields iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'  CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+    "Side Effects for Advances properties
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields( ).
+    cl_trv_annotation_helper=>create_side_effects( EXPORTING it_data_fields = it_data_fields iv_qualifier = 'SideEffects' CHANGING  io_ann_target = lo_ann_target ).
+
+
+    "lv_text = text-001.
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_target_name = '@UI.FieldGroup#Advance' iv_id = 'AdvanceDetails' iv_text_element_symbol = '001' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'  CHANGING io_collection =
+lo_collection )   ##NO_TEXT.
+
+  ENDMETHOD.
+
+
+  METHOD define_contact_annotations.
+    DATA: lo_ann_target      TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_voca_record     TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_email      TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_mobile     TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_phone      TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_adr        TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_voca_property   TYPE REF TO /iwbep/if_mgw_vocan_property,
+          lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection.
+
+
+    lo_ann_target = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'Contact' )   ##NO_TEXT.
+
+    "vCard Contact
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'vCard.Contact'   )   ##NO_TEXT.
+
+    "VCard.ContactType
+    lo_voca_record = lo_voca_annotation->create_record( iv_record_type = 'vCard.ContactType' ).
+
+    lo_voca_record->create_property( iv_property_name = 'fn' )->create_simple_value( )->set_path( iv_value = 'Name' ).
+    lo_voca_record->create_property( iv_property_name = 'title' )->create_simple_value( )->set_path( iv_value = 'Company' ).
+
+    lo_voca_property = lo_voca_record->create_property( iv_property_name = 'email' ).
+    lo_collection = lo_voca_property->create_collection( ).
+
+    lo_voca_email = lo_collection->create_record( iv_record_type = 'vCard.EmailAddressType' ).
+    lo_voca_email->create_property( iv_property_name = 'address' )->create_simple_value( )->set_path( iv_value = 'Email' ).
+    lo_voca_email->create_property( iv_property_name = 'type' )->create_simple_value( )->set_enum_member_by_name( iv_value = 'vCard.ContactInformationType/work' ).
+
+    lo_voca_property = lo_voca_record->create_property( iv_property_name = 'tel' ).
+    lo_collection = lo_voca_property->create_collection( ).
+
+    lo_voca_mobile = lo_collection->create_record( iv_record_type = 'vCard.PhoneNumberType' ).
+    lo_voca_mobile->create_property( iv_property_name = 'uri' )->create_simple_value( )->set_path( iv_value = 'Mobile' ).
+    lo_voca_mobile->create_property( iv_property_name = 'type' )->create_simple_value( )->set_enum_member_by_name( iv_value = 'vCard.PhoneType/cell' ).
+
+    lo_voca_phone = lo_collection->create_record( iv_record_type = 'vCard.PhoneNumberType' ).
+    lo_voca_phone->create_property( iv_property_name = 'uri' )->create_simple_value( )->set_path( iv_value = 'Phone' ).
+    lo_voca_phone->create_property( iv_property_name = 'type' )->create_simple_value( )->set_enum_member_by_name( iv_value = 'vCard.PhoneType/work' ).
+
+    lo_voca_record->create_property( iv_property_name = 'org' )->create_simple_value( )->set_path( iv_value = 'Department' ).
+    "lo_voca_record->create_property( iv_property_name = 'role' )->create_simple_value( )->set_path( iv_value = 'Company' ).
+
+    lo_voca_property = lo_voca_record->create_property( iv_property_name = 'adr' ).
+    lo_collection = lo_voca_property->create_collection( ).
+
+    lo_voca_adr = lo_collection->create_record( iv_record_type = 'vCard.AddressType' ).
+    lo_voca_adr->create_property( iv_property_name = 'street' )->create_simple_value( )->set_path( iv_value = 'Address' ).
+    lo_voca_adr->create_property( iv_property_name = 'type' )->create_simple_value( )->set_enum_member_by_name( iv_value = 'vCard.ContactInformationType/work' ).
+
+  ENDMETHOD.
+
+
+  METHOD define_cost_assign_annotations.
+    DATA: lo_ann_target      TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+          lo_voca_annotation TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_collection      TYPE REF TO /iwbep/if_mgw_vocan_collection,
+          lv_typenameplural  TYPE string,
+          lv_typename        TYPE string,
+          lv_text            TYPE string.
+
+    lo_ann_target = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'CostAssignment' )   ##NO_TEXT.
+
+    "Update Restrictions
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.UpdateRestrictions'   )   ##NO_TEXT.
+    lo_voca_annotation->create_record( )->create_property( iv_property_name = 'Updatable' )->create_simple_value( )->set_boolean( iv_value = abap_true ).
+
+* Define which columns should be displayed for Cost Assignments
+    DATA(it_data_fields) = VALUE cl_trv_annotation_helper=>tt_data_fields(
+       ( name = `Costdistno` )
+       ( name = `Costdisttext`   label = '003' )
+        ( name = `PercShare` )
+*        ( name = `RecShareAbs` ) "GSE[3069291]
+*        ( name = `CompCodeName`   label = text-003 )
+*        ( name = `BusAreaName`    label = text-003 )
+*        ( name = `CoAreaName`     label = text-003 )
+*        ( name = `CostcenterName` label = text-003 )
+      )    ##NO_TEXT.
+    cl_trv_annotation_helper=>create_line_item( EXPORTING it_data_fields = it_data_fields iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'  iv_criticality_path = 'Criticality' CHANGING io_ann_target = lo_ann_target ).
+
+* Define Header data which should be displayed in the Object Page header
+    " Title
+    lv_typenameplural = text-005.
+    lv_typename = text-003.
+    cl_trv_annotation_helper=>create_header_info( EXPORTING iv_title_property = `Costdistno` iv_description_property = `Costdisttext` iv_type_name = lv_typename iv_type_name_plural = lv_typenameplural CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+    " General header info
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+        ( name = `CompCodeName` label = '034' )
+        ( name = `BusAreaName` label = '035'  )
+      )  ##NO_TEXT.
+    cl_trv_annotation_helper=>create_field_group( EXPORTING iv_qualifier = 'HeaderInfo' it_data_fields = it_data_fields iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+* Define Data Point
+    " Percentage
+    "lv_text = text-032.
+    cl_trv_annotation_helper=>create_data_point( EXPORTING iv_text_element_symbol_title = '032' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' iv_property_name = 'PercShare' iv_qualifier = 'Percentage' CHANGING io_ann_target =
+lo_ann_target )   ##NO_TEXT.
+
+    " Absolute Amount
+    "lv_text = text-056.
+    cl_trv_annotation_helper=>create_data_point( EXPORTING iv_text_element_symbol_title = '056' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER'  iv_property_name = 'RecShareAbs' iv_qualifier = 'Absolute' CHANGING io_ann_target =
+lo_ann_target )   ##NO_TEXT.
+
+* Generate reference facets
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.HeaderFacets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+
+    " For general header info
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/Low' iv_id = 'HeaderInfo' iv_target_name = '@UI.FieldGroup#HeaderInfo' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+    " For Percentage DataPoint
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/High' iv_id = 'Percentage' iv_target_name = '@UI.DataPoint#Percentage' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+    " For Absolute Amount DataPoint
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/High' iv_id = 'Absolute' iv_target_name = '@UI.DataPoint#Absolute' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+
+* Define object page sections
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Facets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+        ( NAME = `PercShare` )
+        ( name = `RecShareAbs` label = '056' )
+        ( NAME = `CompCode` )
+      "  ( NAME = `CompCodeName`  label = text-034  )
+        ( name = `BusArea` )
+     "   ( NAME = `BusAreaName`  label = text-035 )
+        ( name = `CoArea` )
+    "    ( NAME = `CoAreaName` label = text-039 )
+        ( name = `Costcenter` )
+     "   ( NAME = `CostcenterName` label = text-038 )
+        ( name = `Order` )
+     "   ( NAME = `OrderName` label = text-040 )
+        ( name = `CostObj` )
+     "   ( NAME = `CostObjName` )
+        ( name = `WbsElemt` )
+    "    ( NAME = `WbsElemtName` label = text-041 )
+        ( name = `Network` )
+    "    ( NAME = `NetworkName` label = text-042 )
+        ( name = `Activity` )
+    "    ( NAME = `ActivityName` label = text-043 )
+        ( name = `SalesOrd` )
+    "    ( NAME = `SalesOrdName` label = text-044 )
+        ( name = `SOrdItem` )
+     "   ( NAME = `SOrdItemName`  label = text-045 )
+        ( name = `CoBusproc` )
+    "    ( NAME = `CoBusprocName` label = text-046 )
+        ( name = `FundsCtr` )
+    "    ( NAME = `FundsCtrName` label = text-047  )
+        ( name = `Fund` )
+    "    ( NAME = `FundName` label = text-048 )
+        ( name = `FuncArea` )
+   "    ( NAME = `FuncAreaName` label = text-049 )
+        ( name = `GrantNbr` )
+    "    ( NAME = `GrantNbrName` label = text-050  )
+        ( name = `CmmtItemLong` )
+    "    ( NAME = `CmmtItemLongName` label = text-051 )
+*        ( name = `ProjectGuid` )
+        ( name = `ProjectExtId` )
+    "    ( NAME = `ProjectExtIdName` label = text-052 )
+*        ( name = `TaskRoleGuid` )
+        ( name = `TaskRoleExtId` )
+    "    ( NAME = `TaskRoleExtIdName` label = text-053  )
+*        ( name = `ObjectType` )
+        ( name = `BudgetPeriod` )
+    "    ( NAME = `BudgetPeriodName` label = text-054  )
+        ( NAME = `Prctr` )
+        ( NAME = `Segment` )
+        ( name = `CategoryName` label = '055'  )
+      )   ##NO_TEXT.
+
+    DATA(it_data_fields_with_path) = VALUE cl_trv_annotation_helper=>tt_data_fields_with_path(
+         ( name = 'Fieldgroup'  label = '036' annotation_path = 'AccountingObjects' ) ).
+
+    cl_trv_annotation_helper=>create_field_group( EXPORTING iv_qualifier = 'CostAssignment' it_data_fields = it_data_fields it_data_fields_with_path = it_data_fields_with_path  iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' CHANGING
+io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+    "Side Effects for Cost Assignment properties
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+        ( name = 'Fieldgroup' ) ( name = `PercShare` ) ).
+    cl_trv_annotation_helper=>create_side_effects( EXPORTING it_data_fields = it_data_fields iv_qualifier = 'SideEffects' CHANGING  io_ann_target = lo_ann_target ).
+
+    "lv_text = text-001.
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_text_element_symbol = '001' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' iv_target_name = '@UI.FieldGroup#CostAssignment' iv_id = 'CostAssignmentDetails' iv_label =
+lv_text CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+  ENDMETHOD.
+
+
+  METHOD define_destination_annotations.
+    DATA: lo_ann_target       TYPE REF TO /iwbep/if_mgw_vocan_ann_target,
+          lo_voca_annotation  TYPE REF TO /iwbep/if_mgw_vocan_annotation,
+          lo_collection       TYPE REF TO /iwbep/if_mgw_vocan_collection,
+          lo_facet_collection TYPE REF TO /iwbep/if_mgw_vocan_collection,
+          lo_record           TYPE REF TO /iwbep/if_mgw_vocan_record,
+          lo_property_value   TYPE REF TO /iwbep/if_mgw_vocan_property,
+          lo_vocan_item       TYPE REF TO /iwbep/if_mgw_vocan_item,
+          lv_typenameplural   TYPE string,
+          lv_typename         TYPE string,
+          lv_text             TYPE string.
+
+    lo_ann_target = io_vocan_model->create_annotations_target( iv_target = iv_namespace && '.' && 'Destination' )   ##NO_TEXT.
+
+    "Update Restrictions
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'Org.OData.Capabilities.V1.UpdateRestrictions'   )   ##NO_TEXT.
+    lo_voca_annotation->create_record( )->create_property( iv_property_name = 'Updatable' )->create_simple_value( )->set_boolean( iv_value = abap_false ).
+
+* Define which columns should be displayed for Destinations
+    DATA(it_data_fields) = VALUE cl_trv_annotation_helper=>tt_data_fields(
+      ( name = `StopTypeText` label = '022' )
+      ( name = `Location` )
+      ( name = `CountryRegionName` )
+      ( name = `Datedep` )
+      ( name = `Timedep` ) )   ##NO_TEXT.
+    cl_trv_annotation_helper=>create_line_item( EXPORTING it_data_fields = it_data_fields iv_criticality_path = 'Criticality'  iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' CHANGING io_ann_target = lo_ann_target ).
+
+* Define Header data which should be displayed in the Object Page header
+    " Title
+    lv_typenameplural = text-006.
+    lv_typename = text-014.
+*    cl_trv_annotation_helper=>create_header_info( EXPORTING iv_title_property = 'LocationLong' iv_type_name = lv_typename iv_type_name_plural = lv_typenameplural iv_description_property = 'StopTypeText' CHANGING io_ann_target = lo_ann_target ).
+cl_trv_annotation_helper=>create_header_info( EXPORTING iv_title_property = 'LocationLong' iv_text_element_symbol_tpname = '014' iv_text_element_symbol_tpnamep = '006' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' iv_description_property =
+'StopTypeText' CHANGING io_ann_target = lo_ann_target ).
+
+
+
+    " General header info
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+       ( name = `CountryRegionName` )
+      )  ##NO_TEXT.
+    cl_trv_annotation_helper=>create_field_group( EXPORTING iv_qualifier = 'HeaderInfo' it_data_fields = it_data_fields  CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+    " Define Data Point
+    " Trip Date
+    cl_trv_annotation_helper=>create_data_point( EXPORTING iv_title = lv_text iv_property_name = 'Datedep' iv_qualifier = 'Datedep' CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+    "End Date
+    cl_trv_annotation_helper=>create_data_point( EXPORTING iv_title = lv_text iv_property_name = 'Timedep' iv_qualifier = 'Timedep' CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+
+* Generate reference facets
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.HeaderFacets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+
+    " For general header info
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/Low' iv_id = 'HeaderInfo' iv_target_name = '@UI.FieldGroup#HeaderInfo' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/Low' iv_id = 'DatedepInfo' iv_target_name = '@UI.DataPoint#Datedep' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_importance = 'UI.ImportanceType/High' iv_id = 'TimedepInfo' iv_target_name = '@UI.DataPoint#Timedep' CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+
+* Define object page sections
+    lo_voca_annotation = lo_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.Facets' )   ##NO_TEXT.
+    lo_collection = lo_voca_annotation->create_collection( ).
+
+    it_data_fields = VALUE cl_trv_annotation_helper=>tt_data_fields(
+      ( NAME = `Datedep` )
+      ( NAME = `Timedep` )
+      ( name = `PlanActivityTypeName` label = '011' )
+      ( name = `TActypeName` label = '010' )
+      ( name = `TtStatuName`  label = '008' )
+      ( name = `TtComspName` label = '009' )
+      ( NAME = `Customer`  )
+      ( NAME = `TaxPerDiemTax` )
+      ( NAME = `TaxPdMantax` )
+      ( NAME = `TaxOvMantax` )
+      ( NAME = `CountryRegionName` )
+      ( NAME = `Countryadr` )
+      ( NAME = `Location` )
+      ( NAME = `Cityadr` )
+      ( NAME = `CityDistrictadr` )
+      ( NAME = `PostCodeadr` )
+      ( NAME = `CityCodeadr` )
+      ( NAME = `HouseNumadr` )
+      ( NAME = `Streetadr` ) )   ##NO_TEXT.
+    cl_trv_annotation_helper=>create_field_group( EXPORTING iv_qualifier = 'Destination' it_data_fields = it_data_fields iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' CHANGING io_ann_target = lo_ann_target )   ##NO_TEXT.
+    "lv_text = text-001.
+    cl_trv_annotation_helper=>create_reference_facet( EXPORTING iv_text_element_symbol = '001' iv_text_element_container_name = 'CL_TRV_ANNOTATION_HELPER' iv_target_name = '@UI.FieldGroup#Destination' iv_id = 'DestinationDetails' iv_label =
+lv_text CHANGING io_collection = lo_collection )   ##NO_TEXT.
+
+  ENDMETHOD.
+
+
+  METHOD filter_restriction_interval.
+    DATA:
+      lo_property   TYPE REF TO /iwbep/if_mgw_odata_property,
+      lo_annotation TYPE REF TO /iwbep/if_mgw_odata_annotation.
+
+    lo_property = iv_model->get_entity_type( iv_entity )->get_property( iv_property_name = iv_property_name )     ##NO_TEXT.
+    lo_annotation = lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace ). "SAP's annotations
+
+    lo_annotation->add(
+       iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-filter_restriction
+       iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-filter-interval
+     ).
+
+  ENDMETHOD.
+
+
+  METHOD format_date.
+    DATA:
+      lo_property   TYPE REF TO /iwbep/if_mgw_odata_property,
+      lo_annotation TYPE REF TO /iwbep/if_mgw_odata_annotation.
+
+    lo_property = iv_model->get_entity_type( iv_entity )->get_property( iv_property_name = iv_property_name )     ##NO_TEXT.
+    lo_annotation = lo_property->/iwbep/if_mgw_odata_annotatabl~create_annotation( /iwbep/if_mgw_med_odata_types=>gc_sap_namespace ). "SAP's annotations
+    lo_annotation->add( iv_key = 'display-format' iv_value = 'Date' )     ##NO_TEXT.
+    "case if the control is a date selection we want to pick just one date
+    IF iv_single_field IS NOT INITIAL.
+      lo_annotation->add(
+        iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-filter_restriction
+        iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-filter-single_value
+      ).
+    ENDIF.
+  ENDMETHOD.
+
+
+  METHOD ignore_technical_fields.
+    DATA: ls_property    TYPE LINE OF tt_properties,
+          lt_properties  TYPE /iwbep/if_mgw_med_odata_types=>ty_t_mgw_odata_properties,
+          ls_property_fc TYPE /iwbep/if_mgw_med_odata_types=>ty_s_mgw_odata_property,
+          lv_property    TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_entity_name.
+    "Ignore Technical Fields manually defined
+    LOOP AT tt_fields INTO ls_property.
+      is_technical(
+        EXPORTING
+          io_model       =   io_model  " Interface for a Script-Based Model
+          iv_entity_type =  iv_entity_type
+          iv_property    =  ls_property-name
+      ).
+    ENDLOOP.
+
+    "Ignore Field Control properties according naming convention ending by Fc
+    lt_properties = io_model->get_entity_type( iv_entity_type )->get_properties( ).
+
+    LOOP AT lt_properties INTO ls_property_fc.
+      IF ls_property_fc-external_name CS 'Fc'.
+        lv_property = ls_property_fc-external_name.
+        is_technical(
+         EXPORTING
+           io_model       =   io_model  " Interface for a Script-Based Model
+           iv_entity_type =  iv_entity_type
+           iv_property    =  lv_property
+       ).
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+
+  METHOD is_date.
+    io_model->get_entity_type( iv_entity_type )->get_property( iv_property )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+      iv_value = 'Date' "##NO_TEXT.
+    ).
+  ENDMETHOD.
+
+
+  METHOD is_multi_line_text.
+    co_ann_target  = io_vocan_model->create_annotations_target( iv_target = iv_namespace  && '.' && iv_entity_type && '/' && iv_property )   ##NO_TEXT.
+    co_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.MultiLineText' )  .
+  ENDMETHOD.
+
+
+  METHOD is_numc.
+    io_model->get_entity_type( iv_entity_type )->get_property( iv_property )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+      iv_value = 'NonNegative'
+    ).
+  ENDMETHOD.
+
+
+  METHOD is_technical.
+    io_model->get_entity_type( iv_entity_type )->get_property( iv_property )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+  )->add(
+    iv_key   = 'visible'
+    iv_value = 'false'
+  ).
+  ENDMETHOD.
+
+
+  METHOD is_technical_filter.
+    co_ann_target  = io_vocan_model->create_annotations_target( iv_target = iv_namespace  && '.' && iv_entity_type && '/' && iv_property )   ##NO_TEXT.
+    co_ann_target->create_annotation( iv_term = 'com.sap.vocabularies.UI.v1.HiddenFilter' )  .
+  ENDMETHOD.
+
+
+  METHOD is_uppercase.
+    io_model->get_entity_type( iv_entity_type )->get_property( iv_property )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-display_format
+      iv_value = 'UpperCase'
+    ).
+  ENDMETHOD.
+
+
+  METHOD set_field_control.
+    TRY.
+        io_model->get_entity_type( iv_entity_type )->get_property( iv_property )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+          iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+        )->add(
+          iv_key   = 'field-control'
+          iv_value = iv_fc_property
+        ).
+      CATCH /iwbep/cx_mgw_med_exception .
+        " assert 1 = 0.
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.
