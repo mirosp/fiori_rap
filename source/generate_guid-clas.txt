@@ -1,0 +1,6 @@
+    TRY.
+        data(lv_guid) = cl_system_uuid=>create_uuid_c32_static( ).
+      CATCH cx_uuid_error .
+*     should not happen ... TODO: exc. ?
+        ASSERT 1 EQ 2.
+    ENDTRY.
