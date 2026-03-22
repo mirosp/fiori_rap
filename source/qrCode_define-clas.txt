@@ -1,0 +1,13 @@
+    DATA:
+      lo_entity   TYPE REF TO /iwbep/if_mgw_odata_entity_typ,
+      lo_property TYPE REF TO /iwbep/if_mgw_odata_property.
+
+    TRY.
+        lo_entity = io_model->get_entity_type( iv_entity_name = 'qrCodeDetail' ).
+
+        IF lo_entity IS BOUND.
+          lo_property = lo_entity->get_property( iv_property_name = 'guid' ).
+          lo_property->set_as_content_type( ).
+        ENDIF.
+      CATCH   /iwbep/cx_mgw_med_exception.
+    ENDTRY.
