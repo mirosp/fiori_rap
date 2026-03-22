@@ -21,3 +21,12 @@ Creation SEGW(tcode) project. OData version 2.
 3. Testing n/IWFND/GW_CLIENT<br>
 
 
+</details>
+<details>
+  <summary>🔵 Click to expand!</summary>
+      
+1. MPC vs DPC classes<br>
+2. CRUD operation<br>
+3. Filtering<br>
+
+
