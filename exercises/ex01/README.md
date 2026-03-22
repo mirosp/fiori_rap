@@ -11,4 +11,9 @@ Creation SEGW(tcode) project. OData version 2.
 
     ![SEGW create](../ex01/images/segw_create.png)
 
+<details>
+  Registering service n/IWFND/MAINT_SERVICE
+  Activating SICF
+  Testing n/IWFND/GW_CLIENT
+
 
