@@ -1,0 +1,973 @@
+class CL_TRV_MTR_MPC_EXT definition
+  public
+  inheriting from CL_TRV_MTR_MPC
+  create public .
+
+public section.
+
+  types:
+    BEGIN OF ts_duplicatetripv2,
+        date      TYPE dats,
+        tripno    TYPE reinr,
+        pernr     TYPE pernr_d,
+        reason    TYPE rkunde,
+        trippernr TYPE pernr_d,
+      END OF ts_duplicatetripv2 .
+
+  methods DEFINE
+    redefinition .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS CL_TRV_MTR_MPC_EXT IMPLEMENTATION.
+
+
+  METHOD define.
+    "Here starts the redefinition for ODATA service
+    DATA:
+      lo_entity                      TYPE REF TO /iwbep/if_mgw_odata_entity_typ,
+      lo_property                    TYPE REF TO /iwbep/if_mgw_odata_property,
+      lo_annotation                  TYPE REF TO /iwbep/if_mgw_odata_annotation,
+      lo_action                      TYPE REF TO /iwbep/if_mgw_odata_action,
+      lo_parameter                   TYPE REF TO /iwbep/if_mgw_odata_property,
+      lo_parameter_action            TYPE REF TO /iwbep/if_mgw_odata_parameter, "2886743
+      lv_method_get_schema_namespace TYPE string VALUE 'GET_SCHEMA_NAMESPACE',
+      lv_obje_service_name           TYPE string,
+      o_re_model                     TYPE REF TO /iwbep/if_mgw_odata_re_model,
+      r_intfdescr                    TYPE REF TO cl_abap_intfdescr,
+      lr_ref                         TYPE REF TO cl_abap_objectdescr,
+      lt_methods                     TYPE abap_methdescr_tab.
+
+    super->define( ).
+
+**********************************************************************
+* MIME TYPES
+**********************************************************************
+    lo_entity = model->get_entity_type( gc_printpreview ).
+    lo_property = lo_entity->get_property( 'Mimetype' )     ##NO_TEXT.
+    lo_property->set_as_content_type( ).
+
+    lo_entity = model->get_entity_type( gc_attachment ).
+    lo_property = lo_entity->get_property( 'Mimetype' )       ##NO_TEXT.
+    lo_property->set_as_content_type( ).
+**********************************************************************
+* DISABLE CONVERSIONS
+**********************************************************************
+    lo_entity = model->get_entity_type( 'Advance' ).
+    lo_property = lo_entity->get_property( 'ExchRate' )     ##NO_TEXT.
+    lo_property->disable_conversion( ).
+
+**********************************************************************
+* SOFT-STATE
+**********************************************************************
+    lr_ref ?= cl_abap_typedescr=>describe_by_name( '/IWBEP/IF_MGW_ODATA_MODEL' )     ##NO_TEXT.
+    lt_methods = lr_ref->methods.
+
+    READ TABLE lt_methods WITH KEY name = 'SET_SOFT_STATE_ENABLED' TRANSPORTING NO FIELDS     ##NO_TEXT.
+    IF sy-subrc EQ 0.
+      "Soft State Enablement
+      model->set_soft_state_enabled( abap_true ).
+    ENDIF.
+**********************************************************************
+* DECLARE LIBS
+**********************************************************************
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = 'vocabularies.UI.v1'
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'com.sap.vocabularies.UI.v1'
+    iv_alias = 'UI' )   ##NO_TEXT.
+
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = 'vocabularies.Communication.v1'
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'com.sap.vocabularies.Communication.v1'
+    iv_alias = 'vCard' )   ##NO_TEXT.
+
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = 'Measures.V1'
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'Org.OData.Measures.V1'
+    iv_alias = 'CQP' )   ##NO_TEXT.
+
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = 'Core.V1'
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'Org.OData.Core.V1'
+    iv_alias = 'Core' )   ##NO_TEXT.
+
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = 'vocabularies.Common.v1'
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'com.sap.vocabularies.Common.v1'
+    iv_alias = 'Common' )   ##NO_TEXT.
+
+    vocab_anno_model->create_vocabulary_reference(
+    iv_vocab_id = ''
+    iv_vocab_version = '0001'
+    )->create_include(
+    iv_namespace = 'TRV_MTR_SRV'
+    iv_alias = 'TRV_MTR_SRV' )   ##NO_TEXT.
+**********************************************************************
+* RETRIEVE ODATA SERVICE NAME
+**********************************************************************
+    TRY.
+        o_re_model ?= model.
+        r_intfdescr ?= cl_abap_typedescr=>describe_by_name( '/IWBEP/IF_MGW_ODATA_RE_MODEL' )     ##NO_TEXT.
+        READ TABLE r_intfdescr->methods WITH KEY name = lv_method_get_schema_namespace TRANSPORTING NO FIELDS.
+        IF sy-subrc = 0.
+          CALL METHOD o_re_model->(lv_method_get_schema_namespace)
+            RECEIVING
+              rv_namespace = lv_obje_service_name.
+        ENDIF.
+    ENDTRY.
+
+    IF lv_obje_service_name IS INITIAL.
+      lv_obje_service_name = 'TRV_MTR_SRV'     ##NO_TEXT.
+    ENDIF.
+
+    cl_trv_annotation_helper=>is_technical(
+     EXPORTING
+         io_model       =   model  " Interface for a Script-Based Model
+         iv_entity_type =  gc_predefinedaddress
+         iv_property    =  'HouseNum' ).  "-->>> is now concatenated into street when existing! GLW note 3036677
+
+**********************************************************************
+* CREATE SEARCH HELPS
+**********************************************************************
+    "Add Search Help for Cost Assignment Entity
+    cl_trv_annotation_helper=>add_sh_in_costassignment(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name ).
+
+
+    "Add Value list for Destination Entity
+    cl_trv_annotation_helper=>add_sh_in_destination(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name ).
+
+    "Add value list for TravelRequest Entity
+    cl_trv_mtr_annotation_helper=>add_sh_in_travel_request(
+           io_odata_model         = model
+           io_vocan_model         = vocab_anno_model
+           iv_namespace           = lv_obje_service_name ).
+
+    "Add Value list for Service Entity
+    cl_trv_mtr_annotation_helper=>add_sh_in_travel_services(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name ).
+
+    "Add Value list for Currencies
+    cl_trv_annotation_helper=>add_value_list_for_currencies(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name
+        iv_entitytype          = gc_advance
+        iv_property            = 'AdvCurr' ).
+
+    cl_trv_annotation_helper=>add_value_list_for_currencies(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name
+        iv_entitytype          = gc_travelservice
+        iv_property            = 'Currency' ).
+
+    "Add Search Help for Advance Entity
+    cl_trv_annotation_helper=>add_sh_in_advance(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name ).
+    "Value List for Currencies
+*    cl_trv_annotation_helper=>create_value_list(
+*        io_odata_model         = model
+*        io_vocan_model         = vocab_anno_model
+*        iv_namespace           = lv_obje_service_name
+*        iv_entitytype          = gc_advance
+*        iv_property            = 'AdvCurr'
+*        iv_search_supported    = abap_true
+*        iv_valuelist_entityset = 'Currencies'
+*        iv_valuelist_property = 'FCurrency'
+*        )->add_in_parameter(
+*            iv_property            = 'Pernr'
+*            iv_valuelist_property  = 'Pernr'
+*        )->add_display_parameter(
+*             iv_valuelist_property  = 'Currtxt'
+*       )       ##NO_TEXT.
+
+    "Add Search Help for Users (Fullname)
+    cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name
+        iv_entitytype          = gc_travelrequest
+        iv_property            = 'Pernr'
+        iv_search_supported    = abap_true
+        iv_valuelist_entityset = 'UserProfiles'
+        iv_valuelist_property  = 'Pernr'
+       )->add_display_parameter(
+             iv_valuelist_property  = 'Fullname'
+       )     ##NO_TEXT.
+    "Add Search Help for Users (Pernr)
+*    cl_trv_annotation_helper=>create_value_list(
+*        io_odata_model         = model
+*        io_vocan_model         = vocab_anno_model
+*        iv_namespace           = lv_obje_service_name
+*        iv_entitytype          = gc_travelrequest
+*        iv_property            = 'Travelername'
+*        iv_search_supported    = abap_true
+*        iv_label = '048' "Note[2886743]
+*        iv_text_element_container_name = 'CL_TRV_MTR_ANNOTATION_HELPER' "Note[2886743]
+*        iv_valuelist_entityset = 'UserProfiles'
+*        iv_valuelist_property  = 'Fullname'
+*       )->add_out_parameter(
+*             iv_valuelist_property  = 'Pernr'
+*             iv_property = 'Pernr'
+*       )     ##NO_TEXT.
+
+** begin of Note[2886743] - Complex search help to allow all employee numbers
+*    "Add Search Help for Users (Pernr)
+*    cl_trv_annotation_helper=>create_value_list(
+*        io_odata_model         = model
+*        io_vocan_model         = vocab_anno_model
+*        iv_namespace           = lv_obje_service_name
+*        iv_entitytype          = gc_travelrequest
+*        iv_property            = 'Travelername'
+*        iv_search_supported    = abap_true
+*        iv_qualifier           = 'AllEmployees'
+*        iv_label = '049'
+*        iv_text_element_container_name = 'CL_TRV_MTR_ANNOTATION_HELPER'
+*        iv_valuelist_entityset = 'SH_Pernrs'
+*        iv_valuelist_property  = 'Nachn'
+*       )->add_display_parameter( iv_valuelist_property = 'Vorna' )->add_out_parameter(
+*             iv_valuelist_property  = 'Pernr'
+*             iv_property = 'Pernr'
+*       ).
+** end of Note[2886743]
+
+    "Add Search Help for Status Name
+    cl_trv_annotation_helper=>create_value_list(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name
+        iv_entitytype          = gc_travelrequest
+        iv_property            = 'StatusName'
+         iv_search_supported    = abap_false
+        iv_valuelist_entityset = 'FIORIStatuses'
+        iv_valuelist_property = 'StatusName'
+       )->add_out_parameter(
+             iv_valuelist_property  = 'StatusId'
+             iv_property = 'Status'
+       )     ##NO_TEXT.
+
+**********************************************************************
+* ANNOTATIONS FOR SMART FILTER BAR
+**********************************************************************
+    " TODO Create specific Method in annotation helps
+    " Fixed values for Status
+    model->get_entity_type( gc_travelrequest )->get_property( 'StatusName' )->set_value_list( 'F' )     ##NO_TEXT.
+    model->get_entity_type( gc_fioristatus )->set_semantic( 'fixed_values' )     ##NO_TEXT.
+
+    lo_annotation = model->get_entity_type( gc_fioristatus )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    ).
+    lo_annotation->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-text
+      iv_value = 'StatusName'
+    )     ##NO_TEXT.
+
+    "Fixed value list for Departure/Arrival
+    model->get_entity_type( gc_travelrequest )->get_property( 'DepartureWork' )->set_value_list( 'F' )     ##NO_TEXT.
+    model->get_entity_type( gc_departurework )->set_semantic( 'fixed_values' )     ##NO_TEXT.
+    model->get_entity_type( gc_travelrequest )->get_property( 'ArrivalWork' )->set_value_list( 'F' )     ##NO_TEXT.
+    model->get_entity_type( gc_arrivalwork )->set_semantic( 'fixed_values' )     ##NO_TEXT.
+
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_property( 'Pernr' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+       )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'required-in-filter'
+      iv_value =  'true'
+    ).
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_property( 'Travelername' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'required-in-filter'
+      iv_value =  'true'
+    ).
+
+    lo_annotation = model->get_entity_type( gc_departurework )->get_property( 'Id' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'text'
+      iv_value =  'Text'
+    ).
+    lo_annotation = model->get_entity_type( gc_arrivalwork )->get_property( 'Id' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'text'
+      iv_value =  'Text'
+    ).
+    lo_annotation = model->get_entity_type( gc_accountingobject )->get_property( 'FieldGroup' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+     iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+   )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'text'
+      iv_value =  'FieldGroupDescription'
+    ).
+
+*    lo_annotation = model->get_entity_type( gc_userprofile )->get_property( 'Pernr' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+*  iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+*  )     ##NO_TEXT.
+*    lo_annotation->add(
+*      iv_key   = 'text'
+*      iv_value =  'Fullname'
+*    ).
+
+    " Status for Other services
+    model->get_entity_type( gc_travelservice )->get_property( 'OsStatus' )->set_value_list( 'F' )     ##NO_TEXT.
+    model->get_entity_type( gc_otherservicestatus )->set_semantic( 'fixed_values' )     ##NO_TEXT.
+
+    lo_annotation = model->get_entity_type( gc_otherservicestatus )->get_property( 'Status' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+     iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+   )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'text'
+      iv_value =  'Text'
+    ).
+
+    " Single value for Pernr Search Help
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_property( 'Pernr' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-filter_restriction
+      iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-filter-single_value
+    ).
+
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_property( 'Travelername' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+      iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+    )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-filter_restriction
+      iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-filter-single_value
+    ).
+**********************************************************************
+*  Ignore Fields for Personalisation Dialog
+**********************************************************************
+
+    DATA(lt_properties) = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'PdAccom' )
+    ( name = 'PdAccom' ) ( name = 'TripBreak' ) ( name = 'TripBreakCountry' )
+    ( name = 'HiddenAttachments' ) ( name = 'Attachmenteditable' )
+    ( name = 'HiddenAdvances' )
+    ( name = 'HiddenTripcostAssignment' )
+    ( name = 'HiddenAdditionalDestinations' ) ( name = 'DisplayMode' ) ( name = 'EditVisible' )
+    ( name = 'HiddenEstimatedCosts' ) ( name = 'DraftLinkVisible' ) ( name = 'SaveDraft' )
+    ( name = 'HiddenTravelServices' )
+    ( name = 'EstCostPlan' ) ( name = 'EstCostReq' )
+    ( name = 'TripTotal' )
+    "( name = 'TotalCost' ) GSE[2861499]
+    ( name = 'Deletable' )
+    ( name = 'Editable' )
+    ( name = 'Maindestinationfullname' )
+    ( name = 'DraftLinkVisible' )
+    ( name = 'DraftUserId' )
+    ( name = 'DetailedAddresses' )
+    ( name = 'HiddenTravelPlanning' )
+    ( name = 'PlanningEnable' )
+    ( name = 'RetCounRgioName' )
+    ( name = 'PayCurr' )
+    ( name = 'TotalCostCurr' )
+    ( name = 'OcDistToWorkpAMove' )
+    ( name = 'OcDistToWorkpBMove' )
+    ( name = 'StatusCriticality' )
+    ( name = 'Timefdp' )
+    ( name = 'AppvlStatusName' )
+    ( name = 'CountryGrpName' )
+    ( name = 'DepartureWorkName' )
+    ( name = 'DmeStatusName' )
+    ( name = 'ExpensesName' )
+    ( name = 'FinStatusName' )
+    ( name = 'PayCurrName' )
+    ( name = 'PayStatusName' )
+* Begin of FIX Note [282194]
+* Here we remove from this list the 3 entries for Trip activity type
+* Trip specific company
+* Trip statutory type
+* End of FIX Note [282194]
+    ( name = 'PrintStatusName' )
+    ( name = 'SettlStatusName' )
+    ( name = 'TpVariantName' )
+    ( name = 'TravelPlanName' )
+    ( name = 'RetTtsName' )
+    ( name = 'TSchemaName' )
+    ( name = 'RequestName' )
+    ( name = 'DrNoOARTrip' )
+    ( name = 'DrNoOORTrip' )
+    ( name = 'OcNoOARTripAMove' )
+    ( name = 'OcNoOARTripAMove' )
+    ( name = 'OcNoOORTripAMove' )
+    ( name = 'OcNoOORTripBMove' )
+    ( name = 'ActNights' )
+    ( name = 'MaxNights' )
+    ( name = 'TripChange' )
+    "( name = 'TripStart' ) GSE[2861499]
+    ( name = 'Status' )
+    ( name = 'Timedpe' )
+    ( name = 'Timeout' )
+    ( name = 'RetCoun' )
+    ( name = 'Timeape' )
+    ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+      EXPORTING
+        tt_fields      = lt_properties
+        io_model       =    model  " Interface for a Script-Based Model
+        iv_entity_type = gc_travelrequest
+    ).
+
+    lt_properties = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'ReturnPossible' ) ( name = 'Criticality' )
+    ( name = 'DisplayMode' ) ( name = 'EditVisible' ) ( name = 'Pernr' ) ( name = 'Tripno' ) ( name = 'RequestType' ) ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+  EXPORTING
+    tt_fields      = lt_properties
+    io_model       =    model  " Interface for a Script-Based Model
+    iv_entity_type = gc_travelservice
+    ).
+
+    lt_properties = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'Criticality' )
+( name = 'Pernr' ) ( name = 'Tripno' ) ( name = 'DisplayOnly' )  ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+  EXPORTING
+    tt_fields      = lt_properties
+    io_model       =    model  " Interface for a Script-Based Model
+    iv_entity_type = gc_advance
+    ).
+
+    lt_properties = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'Criticality' )
+ ( name = 'Pernr' ) ( name = 'Tripno' )  ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+  EXPORTING
+    tt_fields      = lt_properties
+    io_model       =    model  " Interface for a Script-Based Model
+    iv_entity_type = gc_estimatedcostcat
+    ).
+
+    lt_properties = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'Criticality' )
+ ( name = 'Pernr' ) ( name = 'Tripno' ) ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+  EXPORTING
+    tt_fields      = lt_properties
+    io_model       =    model  " Interface for a Script-Based Model
+    iv_entity_type = gc_destination
+    ).
+
+    lt_properties = VALUE cl_trv_annotation_helper=>tt_properties( ( name = 'Criticality' )
+ ( name = 'Pernr' ) ( name = 'Tripno' ) ).
+    cl_trv_annotation_helper=>ignore_technical_fields(
+  EXPORTING
+    tt_fields      = lt_properties
+    io_model       =    model  " Interface for a Script-Based Model
+    iv_entity_type = gc_costassignment
+    ).
+
+    "Creatable-path for related entities
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_navigation_property( 'CostAssignments' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+     iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+   )     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'creatable-path'
+      iv_value =  'AccountingObjects' "Navigation Property for options
+    ).
+
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_navigation_property( 'TravelServicesSet' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+ iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'creatable-path'
+      iv_value =  'Services' "Navigation Property for options
+    ).
+
+    "applicable path for Add Return in Travel Service
+    lo_annotation = model->get_action( iv_action_name =  'CreateReturnService')->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+ iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'applicable-path'
+      iv_value =  'ReturnPossible' "Navigation Property for options
+    ).
+
+    "applicable path for Display PDF For Travel Planning
+    lo_annotation = model->get_action( iv_action_name =  'ExportPlanAsPDF')->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+ iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'applicable-path'
+      iv_value =  'DisplayPossible' "Navigation Property for options
+    ).
+
+    "applicable path for Display PDF For Travel Planning
+    lo_annotation = model->get_action( iv_action_name =  'GetGDSLink')->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+ iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'applicable-path'
+      iv_value =  'LinkEnable' "Navigation Property for options
+    ).
+
+ "applicable path for Cancel Reservation Travel Planning
+    lo_annotation = model->get_action( iv_action_name =  'CancelBooking')->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+ iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'applicable-path'
+      iv_value =  'CancelVisible' "Navigation Property for options
+    ).
+
+* begin of Note[2886743]
+***********************************************************************************************************************************
+*   ACTION - DuplicateTripV2
+***********************************************************************************************************************************
+    lo_action = model->create_action( 'DuplicateTripV2' ).  "#EC NOTEXT
+*Set return entity type
+    lo_action->set_return_entity_type( 'TravelRequest' ).   "#EC NOTEXT
+*Set HTTP method GET or POST
+    lo_action->set_http_method( 'POST' ).                   "#EC NOTEXT
+* Set return type multiplicity
+    lo_action->set_return_multiplicity( '1' ).              "#EC NOTEXT
+***********************************************************************************************************************************
+* Parameters
+***********************************************************************************************************************************
+    lo_parameter_action = lo_action->create_input_parameter( iv_parameter_name = 'Travelername'   iv_abap_fieldname = 'TRAVELERNAME' ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_string( ).
+    lo_parameter_action->set_maxlength( iv_max_length = 40 ). "#EC NOTEXT
+    lo_parameter_action->set_nullable( iv_nullable = abap_false ).
+    lo_parameter_action = lo_action->create_input_parameter( iv_parameter_name = 'Tripno'   iv_abap_fieldname = 'TRIPNO' ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_string( ).
+    lo_parameter_action->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
+    lo_parameter_action->set_nullable( iv_nullable = abap_false ).
+    lo_parameter_action  = lo_action->create_input_parameter( iv_parameter_name = 'Date'   iv_abap_fieldname = 'DATE' ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_datetime( ).
+    lo_parameter_action->set_precison( iv_precision = 7 ).
+    lo_parameter_action->set_nullable( iv_nullable = abap_false ).
+    lo_parameter_action  = lo_action->create_input_parameter( iv_parameter_name = 'Pernr'  iv_abap_fieldname = 'PERNR'  ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_string( ).
+    lo_parameter_action->set_maxlength( iv_max_length = 8 ). "#EC NOTEXT
+    lo_parameter_action  = lo_action->create_input_parameter( iv_parameter_name = 'Customer'  iv_abap_fieldname = 'REASON'   ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_string( ).
+    lo_parameter_action->set_nullable( iv_nullable = abap_true ).
+    lo_parameter_action  = lo_action->create_input_parameter( iv_parameter_name = 'TripPernr'  iv_abap_fieldname = 'TRIPPERNR' ). "#EC NOTEXT
+    lo_parameter_action->/iwbep/if_mgw_odata_property~set_type_edm_string( ).
+    lo_parameter_action->set_maxlength( iv_max_length = 8 ). "#EC NOTEXT
+    lo_action->bind_input_structure( iv_structure_name  = 'CL_TRV_MTR_MPC_EXT=>TS_DUPLICATETRIPV2' ). "#EC NOTEXT
+
+    lo_annotation = model->get_action( iv_action_name =  'DuplicateTripV2')->get_input_parameter( iv_name = 'Tripno' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+  iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'value-list'
+      iv_value =  'S' "Navigation Property for options
+    ).
+
+    CALL METHOD cl_trv_mtr_annotation_helper=>define_function_imports
+      EXPORTING
+        io_vocan_model = vocab_anno_model   " Vocabulary Annotation Model - API to define Annoations
+        iv_namespace   = lv_obje_service_name.
+
+    cl_trv_mtr_annotation_helper=>add_sh_in_function_imports(
+        io_odata_model         = model
+        io_vocan_model         = vocab_anno_model
+        iv_namespace           = lv_obje_service_name ).
+
+* end of Note[2886743]
+
+*    CATCH /iwbep/cx_mgw_med_exception.    "
+
+* POC for Aggregation-role
+    "Total Sum for Estimated Costs
+*    DATA(lo_entity_type) =  model->get_entity_type( gc_estimatedcostcat ).
+*    lo_entity_type->set_semantic(
+*      /iwbep/if_ana_odata_types=>gcs_ana_odata_semantic_value-query-aggregate ).
+*
+*    lo_annotation = model->get_entity_type( gc_estimatedcostcat )->get_property( 'EstimatedCost' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+*    iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+*   )     ##NO_TEXT.
+*    lo_annotation->add(
+*      iv_key   =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-aggregation_role
+*      iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-measure-measure "Navigation Property for options
+*    ).
+*
+*    lo_annotation = model->get_entity_type( gc_estimatedcostcat )->get_property( 'CategoryName' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+*   iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+*  )     ##NO_TEXT.
+*    lo_annotation->add(
+*      iv_key   =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_key-aggregation_role
+*      iv_value =  /iwbep/if_ana_odata_types=>gcs_ana_odata_annotation_value-dimension-dimension  "Navigation Property for options
+*    ).
+
+
+**********************************************************************
+* ANNOTATIONS TO DISPLAY ONLY DATE dd/mm/yyyy NOT THE TIME hh:mm
+**********************************************************************
+    "Start Date for Trip.
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'TripStart'
+            iv_single_field  = abap_true.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+    "End Date for Trip.
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'TripEnd'
+            iv_single_field  = abap_true.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+    "Change Date for Trip.
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'TripChange'
+            iv_single_field  = abap_true.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+    "Date for Trip Begins on.
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'Datedep'
+            iv_single_field  = abap_true.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+    "Begin of Note[2760757]
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>filter_restriction_interval
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'Datedep'.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+    "End of Note[2760757]
+    "Date for Trip End on.
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelrequest
+            iv_property_name = 'Datearr'.
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+    "Date for Payment Date
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_advance
+            iv_property_name = 'PayDate'
+*           iv_single_field  =
+          .
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+*Date for Travel services
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelservice
+            iv_property_name = 'DateBeg'
+*           iv_single_field  =
+          .
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_travelservice
+            iv_property_name = 'DateEnd'
+*           iv_single_field  =
+          .
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+*Date for Destination
+    TRY.
+        CALL METHOD cl_trv_annotation_helper=>format_date
+          EXPORTING
+            iv_model         = model
+            iv_entity        = gc_destination
+            iv_property_name = 'Datedep'
+*           iv_single_field  =
+          .
+      CATCH /iwbep/cx_mgw_med_exception .
+    ENDTRY.
+
+
+**********************************************************************
+* ANNOTATIONS FOR ENTITIES
+**********************************************************************
+* Travel Request - define annotations
+
+    cl_trv_mtr_annotation_helper=>define_trv_request_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Cost assignment - define annotations
+
+    cl_trv_annotation_helper=>define_cost_assign_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+
+**********************************************************************
+* Destination - define annotations
+
+    cl_trv_annotation_helper=>define_destination_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Estimated Cost - define annotations
+
+    cl_trv_mtr_annotation_helper=>define_est_cost_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Travel Service - define annotations
+
+    cl_trv_mtr_annotation_helper=>define_trv_service_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Service - define annotations
+
+    cl_trv_mtr_annotation_helper=>define_service_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Advance - define annotations
+
+    cl_trv_annotation_helper=>define_advance_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Travel Planning - define annotations
+
+    cl_trv_mtr_annotation_helper=>define_trv_plan_annotations(
+      EXPORTING
+        iv_namespace   = lv_obje_service_name
+      CHANGING
+        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+    ).
+**********************************************************************
+* Contact - define annotations
+
+*    cl_trv_annotation_helper=>define_contact_annotations(
+*      EXPORTING
+*        iv_namespace   = lv_obje_service_name
+*      CHANGING
+*        io_vocan_model = vocab_anno_model  " Vocabulary Annotation Model - API to define Annotations
+*    ).
+
+**********************************************************************
+* ANNOTATIONS FOR FIELD CONTROL
+**********************************************************************
+    "Add Field controls for TravelRequest entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_travelrequest
+    ).
+
+    DATA(it_data_fc_properties) = VALUE cl_trv_annotation_helper=>tt_data_fc_properties(
+    ( data_property = 'RecShareAbs' fc_property = 'AbsoluteFc' )
+   ( data_property = 'RecCurr' fc_property = 'CurrencyFc' ) ).
+    "Add Field controls for CostAssignment entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_costassignment
+        tt_data_fc_properties = it_data_fc_properties
+    ).
+
+    "Add Field controls for Advance entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_advance
+    ).
+    "Add Field controls for EstimatedCostCat entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_estimatedcostcat
+    ).
+    "Add Field controls for Destination entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_destination
+    ).
+
+* Special treatment for CountryRegionName
+    lo_annotation = model->get_entity_type( gc_destination )->get_property( 'CountryRegionName' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'field-control'
+      iv_value =  'CountryFc'
+    ).
+    lo_annotation = model->get_entity_type( gc_travelrequest )->get_property( 'CountryRegionName' )->/iwbep/if_mgw_odata_annotatabl~create_annotation(
+iv_annotation_namespace =  /iwbep/if_mgw_med_odata_types=>gc_sap_namespace
+)     ##NO_TEXT.
+    lo_annotation->add(
+      iv_key   = 'field-control'
+      iv_value =  'CountryFc'
+    ).
+
+    "Add Field controls for TravelService entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_travelservice
+    ).
+
+    it_data_fc_properties = VALUE cl_trv_annotation_helper=>tt_data_fc_properties(
+   ( data_property = 'RecordLocator' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanApprovalStatus' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanStatus' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanAlertStatus' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanStatusName' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanStatusAlertName' fc_property = 'TravelPlanFc' )
+   ( data_property = 'TicketNumber' fc_property = 'TravelPlanFc' )
+   ( data_property = 'TicketStatus' fc_property = 'TravelPlanFc' )
+   ( data_property = 'PlanApprovalStatusName' fc_property = 'TravelPlanFc' )
+   ( data_property = 'LastUpdate' fc_property = 'TravelPlanFc' )
+    ).
+    "Add Field controls for TravelPlan entity
+    cl_trv_annotation_helper=>add_field_controls(
+      EXPORTING
+        io_model       =  model   " Interface for a Script-Based Model
+        iv_entity_type = gc_travelplan
+        tt_data_fc_properties = it_data_fc_properties
+    ).
+
+    TRY.
+        model->get_entity_type( gc_travelrequest )->get_property( 'CityCodeadr' )->disable_conversion( ).
+      CATCH cx_root.
+    ENDTRY.
+**********************************************************************
+* Technical Filter - Hidden Filter
+**********************************************************************
+    cl_trv_annotation_helper=>is_technical(
+         EXPORTING
+             io_model       =   model  " Interface for a Script-Based Model
+             iv_entity_type =  gc_recurringdestination
+             iv_property    =  'Country'
+         ).
+    cl_trv_annotation_helper=>is_technical(
+      EXPORTING
+        io_model       =   model  " Interface for a Script-Based Model
+        iv_entity_type =  gc_recurringdestination
+        iv_property    =  'Countryadr'
+    ).
+    cl_trv_annotation_helper=>is_technical(
+      EXPORTING
+        io_model       =   model  " Interface for a Script-Based Model
+        iv_entity_type =  gc_recurringdestination
+        iv_property    =  'Regionadr'
+    ).
+
+    cl_trv_annotation_helper=>is_technical(
+    EXPORTING
+      io_model       =   model  " Interface for a Script-Based Model
+      iv_entity_type =  gc_recurringdestination
+      iv_property    =  'Region'
+      ).
+
+    cl_trv_annotation_helper=>is_technical(
+        EXPORTING
+            io_model       =   model  " Interface for a Script-Based Model
+            iv_entity_type =  gc_sh_countryregion
+            iv_property    =  'Land1'
+    ).
+
+    cl_trv_annotation_helper=>is_technical(
+        EXPORTING
+            io_model       =   model  " Interface for a Script-Based Model
+            iv_entity_type =  gc_predefinedaddress
+            iv_property    =  'Country'
+    ).
+
+    cl_trv_annotation_helper=>is_technical(
+        EXPORTING
+            io_model       =   model   " Interface for a Script-Based Model
+            iv_entity_type =  gc_predefinedaddress
+            iv_property    =  'Region'
+    ).
+
+* OCA[3059519] set factor as technical
+    cl_trv_annotation_helper=>is_technical(
+        EXPORTING
+            io_model       =   model   " Interface for a Script-Based Model
+            iv_entity_type =  gc_advance
+            iv_property    =  'SFactor'
+    ).
+
+    cl_trv_annotation_helper=>is_technical(
+        EXPORTING
+            io_model       =   model   " Interface for a Script-Based Model
+            iv_entity_type =  gc_advance
+            iv_property    =  'TFactor'
+    ).
+
+
+
+  ENDMETHOD.
+ENDCLASS.
