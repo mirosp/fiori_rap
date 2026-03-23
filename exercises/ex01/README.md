@@ -24,14 +24,14 @@ Creation SEGW(tcode) project. OData version 2.
 </details>
 <details>
   <summary>🔵 Click to expand!</summary>
+
+1. MPC vs DPC classes<br>
+2. CRUD operation<br>
+3. Filtering<br>
 </details>
 
 
 ## Fiori elements feature map
 https://blog.zeis.de/posts/2026-03-12-fiori-elements-feature-map/
-      
-1. MPC vs DPC classes<br>
-2. CRUD operation<br>
-3. Filtering<br>
 
 
