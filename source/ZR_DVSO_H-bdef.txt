@@ -1,5 +1,5 @@
-managed implementation in class ZBP_R_DVSO_H unique; // Clase Z - Punto extensión
-strict( 1 );
+managed implementation in class ZBP_R_DVSO_H unique; 
+strict( 2 );
 with draft;
 extensible;
 
@@ -7,8 +7,8 @@ define behavior for ZR_DVSO_H alias Header
 persistent table zdv_so_h
 extensible
 draft table zdvso_h_d
-etag master LocalLastChangedAt // Control de concurrencia
-lock master total etag LastChangedAt // Bloqueo
+etag master LocalLastChangedAt 
+lock master total etag LastChangedAt 
 authorization master ( global )
 {
   field ( readonly ) // Campos solo lectura
