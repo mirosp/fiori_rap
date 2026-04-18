@@ -89,7 +89,7 @@ RUNNING
 ```
 8. Click on the dev space name to open it.
 
-## Notes
+### Notes
 - Initial startup may take a few minutes.
 - You can stop unused dev spaces to save resources.
 - Make sure your assigned quotas allow dev space creation.
