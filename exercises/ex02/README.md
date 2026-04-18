@@ -1,8 +1,5 @@
 # HANDS-ON EXERCISE 2
 
-## Previous Exercise
-[Exercies 1:](readme1.md)
-
 ## Introduction
 In this hands-on exercise, you will create a very simple _Hello World_ ABAP console app on the SAP Cloud Platform ABAP Environment. You can watch [unit 6 of week 1: Creating your first ABAP Cloud Console App](https://open.sap.com/courses/cp13/items/2pGdRamTOSbbTVzsxPum69) on the openSAP.com platform.
 
@@ -24,7 +21,7 @@ First, create a new ABAP package to group the various development objects that y
 
 1. In the Project Explorer, right-click on your _ABAP cloud project_ and choose **_New > ABAP Package_** from the context menu.  
   
-    ![create ABAP package 01](images/w1u5_01_01.png)
+    ![create ABAP package 01](images/ex02_01_01.png)
 
 
 2. Maintain **`ZRAP_####`** as **name** (where `####` is your chosen suffix) and a meaningful **description** (e.g. _`RAP Exercises`_).  
@@ -32,22 +29,22 @@ First, create a new ABAP package to group the various development objects that y
     
     Choose **Next** to continue.  
     
-    ![create ABAP package 02](images/w1u5_01_02.png)
+    ![create ABAP package 02](images/ex02_01_02.png)
     
 3. Assign a transport request.  
     For that, either select an existing transport request – if available – or choose **Create a new request**, enter a meaningful **description** and then choose **Finish**.  
     
-    ![create ABAP package 03](images/w1u5_01_03.png)  
+    ![create ABAP package 03](images/ex02_01_03.png)  
       
     The new package is now created.  
   
-    ![create ABAP package 04](images/w1u5_01_04.png)
+    ![create ABAP package 04](images/ex02_01_04.png)
     
 4. Add your ABAP package to the **Favorites Packages** to make it easier to access.  
     For that, either **(1)** right-click on the relevant package and choose the context menu entry **_Add to Favorite Packages_** or **(2)** right-click on the **Favorites Packages** folder in the Project Explorer, choose the context menu entry **Add Package...**, filter the entries for the relevant package in the appearing dialog and press **OK** to add it. 
     
     _Option 1 & 2_: 
-    ![create ABAP package 04](images/w1u5_01_04b.png)
+    ![create ABAP package 04](images/ex02_01_04b.png)
 
 
 ## Step 2. Create and implement the _Hello World_ Console App
@@ -55,29 +52,29 @@ You can now go ahead and create and implement your _Hello World_ console app.
   
 1. Right-click on your package and choose **_New > ABAP Class_** from the context menu.  
   
-    ![create Hello World 01](images/w1u5_01_05.png)
+    ![create Hello World 01](images/ex02_01_05.png)
 
 
 2. Maintain **`ZCL_HELLO_WORLD_####`** as **name** (where `####` is your chosen suffix) and a meaningful **description** (e.g. _`Hello world`_) for the ABAP class. 
     Add the ABAP interface **`IF_OO_ADT_CLASSRUN`** which needs to be implemented in order to write outputs to the ABAP Console and choose **Next**.  
       
-    ![create Hello World 02](images/w1u5_01_06.png)
+    ![create Hello World 02](images/ex02_01_06.png)
     
 3. Assign the previously created transport request and choose **Finish**.  
       
-    ![create Hello World 03](images/w1u5_01_07.png)  
+    ![create Hello World 03](images/ex02_01_07.png)  
       
     The ABAP class is now created and opened in the source-based class editor, ready for you to implement.  
 You can hover the appearing warning in the editor or have a look at it in the _**Problems**_ view.  
 The reason for this warning is the currently missing implementation of the method **`main`**.  
     
     
-    ![create Hello World 04](images/w1u5_01_08.png)  
+    ![create Hello World 04](images/ex02_01_08.png)  
     
     
 4. Set the cursor on the problematic statement, press **CTRL+1** to open the _Quick Assist_ view to check for proposals to solve this issue and choose the entry **`Add implementation for main`**_.  
           
-    ![create Hello World 04](images/w1u5_01_09.png)
+    ![create Hello World 04](images/ex02_01_09.png)
     
      
     >     
@@ -105,7 +102,7 @@ _**Source Code Editors > Code Completion_** and under _**Source Code Editors > C
      
     Check out the result in the _ABAP Console_ view.  
       
-    ![create Hello World 05](images/w1u5_01_10.png)
+    ![create Hello World 05](images/ex02_01_10.png)
     
 7. Let's enhance the current output with the user alias by using embedded expression.   
     
@@ -118,7 +115,7 @@ _**Source Code Editors > Code Completion_** and under _**Source Code Editors > C
 8. Save ![save icon](images/adt_save.png) and activate ![activate icon](images/adt_activate.png) the changes.  
     Check out the enhanced output in the _**Console**_ view.  
       
-    ![create Hello World 06](images/w1u5_01_11.png)
+    ![create Hello World 06](images/ex02_01_11.png)
       
     > You can easily clear the _**Console**_ view via its context menu entry _**Clear**_.
     
@@ -130,9 +127,29 @@ In this unit, you have learned
 - How to create a simple _Hello World!_ console app
 
 ## Solution
-Find the source code for the created class in the **[/week1/sources](/week1/sources)** folder:
-- [W1U6_CLAS_ZCL_HELLO_WORLD_####](/week1/sources/W1U6_CLAS_ZCL_HELLO_WORLD.txt)
+Find the source code for the created class:
+---
+CLASS zcl_hello_world_#### DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+
+    INTERFACES if_oo_adt_classrun .
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zcl_hello_world_#### IMPLEMENTATION.
+  METHOD if_oo_adt_classrun~main.
+    out->write( |Hello world! ({ cl_abap_context_info=>get_user_alias(  ) })| ).
+  ENDMETHOD.
+
+ENDCLASS.
+---
       
 Do not forget to replace all the occurrences of `####` with your chosen suffix in the copied source code.
-## Next excercise
-[Week 2: Developing a Read-Only List Report App](/week2/README.md)
+
