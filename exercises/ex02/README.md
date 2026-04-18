@@ -127,8 +127,8 @@ In this unit, you have learned
 - How to create a simple _Hello World!_ console app
 
 ## Solution
-Find the source code for the created class in the **[/source](/source)** folder:
-- [ZCL_HELLO_WORLD_####](/source/zcl_hello_world_####-clas.txt)
+Find the source code for the created class in the **[source](/source)** folder:
+- [ZCL_HELLO_WORLD_####](source/zcl_hello_world_####-clas.txt)
       
 Do not forget to replace all the occurrences of `####` with your chosen suffix in the copied source code.
 
