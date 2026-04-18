@@ -23,6 +23,9 @@ https://tools.hana.ondemand.com/latest
 6. On the next wizard page, review the overview of features to be installed, then choose **Next**.
 7. Confirm the license agreements and choose **Finish** to start the installation.
 
+## Tutorial ADT
+You can also check out this interactive tutorial: [Install ABAP Development Tools (ADT)](https://developers.sap.com/tutorials/abap-install-adt.html).
+
 
 BAS in BTP cockpit
 https://account.hana.ondemand.com/#/home/welcome
