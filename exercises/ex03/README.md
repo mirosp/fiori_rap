@@ -3,7 +3,7 @@
 ## Introduction
 In this hands-on exercise, you will create a Interface CDS View.
 
-### 1) Parent–Child Model (Header → Items) with Composition
+### Parent–Child Model (Header → Items) with Composition
 The BO is modeled around:
 - **Root entity (Header):** [`ZR_DVSO_H`](source/ZR_DVSO_H-ddls.txt)
 - **Child entity (Items):** [`ZR_DVSO_I`](source/ZR_DVSO_I-ddls.txt)
