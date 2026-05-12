@@ -1,3 +1,7 @@
+# HANDS-ON EXERCISE 3
+
+## Introduction
+In this hands-on exercise, you will create a Interface CDS View.
 
 ### 1) Parent–Child Model (Header → Items) with Composition
 The BO is modeled around:
