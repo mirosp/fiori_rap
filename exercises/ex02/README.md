@@ -1,7 +1,7 @@
 # HANDS-ON EXERCISE 2
 
 ## Introduction
-In this hands-on exercise, you will create a very simple _Hello World_ ABAP console app on the SAP Cloud Platform ABAP Environment. You can watch [unit 6 of week 1: Creating your first ABAP Cloud Console App](https://open.sap.com/courses/cp13/items/2pGdRamTOSbbTVzsxPum69) on the openSAP.com platform.
+In this hands-on exercise, you will create a very simple _Hello World_ ABAP console app.
 
 > **Hints and Tips**    
 > Speed up the typing by making use of the _Code Completion_ feature (shortcut Ctrl+Space) and the prepared code snippets provided. 
