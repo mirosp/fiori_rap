@@ -1,7 +1,7 @@
 # HANDS-ON EXERCISE 5
 
 ## Introduction
-In this hands-on exercise, you will create a Data access.
+In this hands-on exercise, you will create a Access control.
 
 ### Authorizations (DCL)
 Access control artifacts included:
