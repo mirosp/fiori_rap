@@ -1,10 +1,23 @@
 # HANDS-ON EXERCISE 8
 
 ## Introduction
-In this hands-on exercise, you will handle a Chart.
+In this hands-on exercise, you will handle a Validations.
 
-### Donut Chart 🍩 (Fiori elements)
-Chart and UI metadata are defined through annotations (no custom UI coding):
+### Validations on Save (Business Rules) ✅❌
+Header validations (root behavior):
+- `validateCustomer` (SoldToParty mandatory)
+- `validateAmounts` (NetAmount > 0, TaxAmount >= 0)
+- `validateDocumentDate` (mandatory and not in the future)
+- `validateCurrency` (CurrencyCode mandatory)
 
-- Item UI annotations: [`ZC_DVSO_I.ddlx`](source/zc_dvso_i.ddlx.asddlxs#L1-L14)
+Defined here:
+- [`ZR_DVSO_H validations`](source/zr_dvso_h.bdef.asbdef#L39-L48)
+
+Item validation:
+- `validateItemsSum on save { create; update; field NetAmount; }`
+- Defined here: `Item~validateItemsSum`](source/zr_dvso_h.bdef.asbdef#L122-L123)
+- Orchestrated via draft prepare: [`Prepare triggers Item~validateItemsSum`](source/zr_dvso_h.bdef.asbdef#L59)
+
+Implementation (draft-aware reads in LOCAL MODE + associations):
+- [`validateItemsSum implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L120-L220)
 
