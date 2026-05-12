@@ -1,7 +1,7 @@
 # HANDS-ON EXERCISE 7
 
 ## Introduction
-In this hands-on exercise, you will handle a KPI.
+In this hands-on exercise, you will handle a KPI & Chart.
 
 ### KPI: Budget Consumption (Items Sum vs Header NetAmount) + Criticality 🚦
 The Object Page displays:
@@ -19,3 +19,9 @@ CDS implementation:
 > [!WARNING]
 > In managed draft, a CDS KPI can look misleading if it reads only active data while the user is editing draft records.
 > If activation fails due to validation errors, active data does not change, so the KPI may remain “green” even when the draft is already over budget.
+
+
+### Donut Chart 🍩 (Fiori elements)
+Chart and UI metadata are defined through annotations (no custom UI coding):
+
+- Item UI annotations: [`ZC_DVSO_I.ddlx`](source/zc_dvso_i.ddlx.asddlxs#L1-L14)
