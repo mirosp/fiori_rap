@@ -57,8 +57,8 @@ Projection behavior (exposes actions to the UI):
 
 ### 3) Authorizations (DCL)
 Access control artifacts included:
-- Root DCL: [`ZR_DVSO_H.dcls`](source/zr_dvso_h.dcls.asdcls#L1-L6)
-- Projection DCL: [`ZC_DVSO_H.dcls`](source/zc_dvso_h.dcls.asdcls#L1-L6)
+- Root DCL: [`ZR_DVSO_H.dcls`](source/ZR_DVSO_H-dcls.txt#L1-L6)
+- Projection DCL: [`ZC_DVSO_H.dcls`](source/ZC_DVSO_H-dcls.txt#L1-L6)
 
 > The root entity uses `authorization master (global)` and the handler provides a demo-friendly `GET_GLOBAL_AUTHORIZATIONS`.
 
@@ -67,8 +67,8 @@ Access control artifacts included:
 ### 4) Value Helps (F4) + Text Associations
 Value helps are wired in the projection views using `@Consumption.valueHelpDefinition` and text associations (`@ObjectModel.text.element`):
 
-- Header value helps + text: [`ZC_DVSO_H`](source/zc_dvso_h.ddls.asddls#L17-L27)
-- Item value helps (product/unit/etc.): [`ZC_DVSO_I`](source/zc_dvso_i.ddls.asddls#L14-L19)
+- Header value helps + text: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L17-L27)
+- Item value helps (product/unit/etc.): [`ZC_DVSO_I`](source/ZC_DVSO_I-ddls.txt#L14-L19)
 
 ---
 
