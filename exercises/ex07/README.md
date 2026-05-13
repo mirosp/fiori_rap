@@ -10,11 +10,11 @@ The Object Page displays:
 - `ConsumptionCriticality` (0 neutral, 1 red, 2 amber, 3 green)
 
 CDS implementation:
-- Items SUM view: [`ZI_DVSO_SUM`](../../source/ZI_DVSO_SUM-ddls.txt#L1-L18)
-- KPI view (header + join to SUM): [`ZI_DVSO_KPI`](source/zi_dvso_kpi.ddls.asddls#L1-L44)
+- Items SUM view: [`ZI_DVSO_SUM`](../../source/zi_dvso_sum-ddls.txt#L1-L18)
+- KPI view (header + join to SUM): [`ZI_DVSO_KPI`](../../source/zi_dvso_kpi-ddls.txt#L1-L44)
 
-- Header UI annotations: [`ZC_DVSO_H.ddlx`](source/zc_dvso_h.ddlx.asddlxs#L13-L14)
-- DataPont UI annotation: [`DataPoint`](source/zc_dvso_h.ddlx.asddlxs#L63-L80)
+- Header UI annotations: [`ZC_DVSO_H.ddlx`](../../source/zc_dvso_h-ddlx.txt#L13-L14)
+- DataPont UI annotation: [`DataPoint`](../../source/zc_dvso_h-ddlx.txt#L63-L80)
 
 > [!WARNING]
 > In managed draft, a CDS KPI can look misleading if it reads only active data while the user is editing draft records.
@@ -24,4 +24,4 @@ CDS implementation:
 ### Donut Chart 🍩 (Fiori elements)
 Chart and UI metadata are defined through annotations (no custom UI coding):
 
-- Item UI annotations: [`ZC_DVSO_I.ddlx`](source/zc_dvso_i.ddlx.asddlxs#L1-L14)
+- Item UI annotations: [`ZC_DVSO_I.ddlx`](../../source/ZC_DVSO_I.ddlx.txt#L1-L14)
