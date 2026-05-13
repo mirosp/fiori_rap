@@ -10,17 +10,17 @@ Actions are defined on Header:
 - **CalculateAmounts** → sets `GrossAmount = NetAmount + TaxAmount`
 
 Defined here:
-- [`Header actions`](source/zr_dvso_h.bdef.asbdef#L39-L42)
+- [`Header actions`](../../source/ZR_DVSO_H-bdef.txt#L39-L42)
 
 Exposed in projection behavior (required for proper UI behavior):
-- [`use action Approve/Reject/CalculateAmounts`](source/zc_dvso_h.bdef.asbdef#L16-L19)
+- [`use action Approve/Reject/CalculateAmounts`](../../source/ZC_DVSO_H-bdef.txt#L16-L19)
 
 Implemented here:
-- [`Approve`](source/zbp_r_dvso_h.clas.locals_imp.abap#L334-L374)
-- [`Reject`](source/zbp_r_dvso_h.clas.locals_imp.abap#L419-L460)
-- [`CalculateAmounts`](source/zbp_r_dvso_h.clas.locals_imp.abap#L376-L417)
+- [`Approve`](../../source/ZBP_R_DVSO_H-clas.txt#L334-L374)
+- [`Reject`](../../source/ZBP_R_DVSO_H-clas.txt#L419-L460)
+- [`CalculateAmounts`](../../source/ZBP_R_DVSO_H-clas.txt#L376-L417)
 
 > [!IMPORTANT]
 > For actions to appear as buttons in Fiori elements, you must also place them using UI annotations
 > (e.g. `@UI.identification` / `@UI.lineItem` with `type: #FOR_ACTION`), typically in:
-> - [`ZC_DVSO_H.ddlx`](source/zc_dvso_h.ddlx.asddlxs#L76-L79)
+> - [`ZC_DVSO_H.ddlx`](../../source/ZC_DVSO_H-ddlx.txt#L76-L79)
