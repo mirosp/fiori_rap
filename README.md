@@ -18,7 +18,7 @@ It manages a **Sales Order** business object with **Header (root)** and **Items 
 
 ### 1) Parent–Child Model (Header → Items) with Composition
 
-Go to [`exercise`](exercises/ex03/README.md)
+Go to [`EXERCISE`](exercises/ex03/README.md)
 
 The BO is modeled around:
 - **Root entity (Header):** [`ZR_DVSO_H`](source/ZR_DVSO_H-ddls.txt)
