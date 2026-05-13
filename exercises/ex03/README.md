@@ -188,9 +188,8 @@ define view entity ZC_DVSO_I
       @Semantics: { systemDateTime.localInstanceLastChangedAt: true } LocalLastChangedAt,
       @Semantics: { systemDateTime.lastChangedAt: true } LastChangedAt,
 
-      _BaseEntity,   
-
       /* Asociaciones */
+      _BaseEntity,   
 //      _Product,
       _Header : redirected to parent ZC_DVSO_H
 }
