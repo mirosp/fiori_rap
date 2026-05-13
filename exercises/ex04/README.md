@@ -34,12 +34,28 @@ etag master LocalLastChangedAt
 lock master total etag LastChangedAt 
 ```
 ---
-- Composition to items (draft-enabled): [`association _Items { create; with draft; }`](source/zr_dvso_h.bdef.asbdef#L36-L37)
-- Draft actions: [`Activate/Discard/Edit/Resume`](source/zr_dvso_h.bdef.asbdef#L55-L57)
-- Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](source/zr_dvso_h.bdef.asbdef#L58-L64)
+- Composition to items (draft-enabled): `association _Items { create; with draft; }`
+```
+todo
+```
+---
+- Draft actions: `Activate/Discard/Edit/Resume`
+```
+todo
+```
+---
+- Draft Prepare orchestrating validations: `Prepare { validation Item~validateItemsSum; etc }`
+```
+todo
+```
+---
 
 Projection behavior (exposes actions to the UI):
-- [`ZC_DVSO_H.bdef`](source/zc_dvso_h.bdef.asbdef#L1-L51)
+- `ZC_DVSO_H.bdef`
+```
+todo
+```
+
 
 > [!IMPORTANT]
 > In Fiori elements, an action can exist in the behavior but behave incorrectly (or not appear) unless it is properly exposed in the **projection behavior** using `use action ...`.
