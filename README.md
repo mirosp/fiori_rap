@@ -38,17 +38,17 @@ This app uses **managed RAP with draft**, so users can:
 - Get consistent locking + ETags
 
 Root behavior definition (draft + etag/locks + validations + actions + mappings):
-- [`ZR_DVSO_H.bdef`](source/ZR_DVSO_H-bdef.txt#L1-L144)
+- [`ZR_DVSO_H.bdef`](source/ZR_DVSO_H-bdef.txt#L1-L142)
 
 Highlights:
-- Draft + strict mode: [`managed implementation / strict / with draft`](source/zr_dvso_h.bdef.asbdef#L1-L12)
-- ETag + locks: [`etag master` + `lock master`](source/zr_dvso_h.bdef.asbdef#L10-L11)
-- Composition to items (draft-enabled): [`association _Items { create; with draft; }`](source/zr_dvso_h.bdef.asbdef#L36-L37)
-- Draft actions: [`Activate/Discard/Edit/Resume`](source/zr_dvso_h.bdef.asbdef#L55-L57)
-- Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](source/zr_dvso_h.bdef.asbdef#L58-L64)
+- Draft + strict mode: [`managed implementation / strict / with draft`](source/ZR_DVSO_H-bdef.txt##L1-L12)
+- ETag + locks: [`etag master` + `lock master`](source/ZR_DVSO_H-bdef.txt##L10-L11)
+- Composition to items (draft-enabled): [`association _Items { create; with draft; }`](source/ZR_DVSO_H-bdef.txt##L36-L37)
+- Draft actions: [`Activate/Discard/Edit/Resume`](source/ZR_DVSO_H-bdef.txt##L55-L57)
+- Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](source/ZR_DVSO_H-bdef.txt##L58-L64)
 
 Projection behavior (exposes actions to the UI):
-- [`ZC_DVSO_H.bdef`](source/zc_dvso_h.bdef.asbdef#L1-L51)
+- [`ZC_DVSO_H.bdef`](source/ZC_DVSO_H-bdef.txt#L1-L51)
 
 > [!IMPORTANT]
 > In Fiori elements, an action can exist in the behavior but behave incorrectly (or not appear) unless it is properly exposed in the **projection behavior** using `use action ...`.
@@ -106,12 +106,12 @@ Header validations (root behavior):
 - `validateCurrency` (CurrencyCode mandatory)
 
 Defined here:
-- [`ZR_DVSO_H validations`](source/zr_dvso_h.bdef.asbdef#L39-L48)
+- [`ZR_DVSO_H validations`](source/ZR_DVSO_H-bdef.txt##L39-L48)
 
 Item validation:
 - `validateItemsSum on save { create; update; field NetAmount; }`
-- Defined here: `Item~validateItemsSum`](source/zr_dvso_h.bdef.asbdef#L122-L123)
-- Orchestrated via draft prepare: [`Prepare triggers Item~validateItemsSum`](source/zr_dvso_h.bdef.asbdef#L59)
+- Defined here: `Item~validateItemsSum`](source/ZR_DVSO_H-bdef.txt##L122-L123)
+- Orchestrated via draft prepare: [`Prepare triggers Item~validateItemsSum`](source/ZR_DVSO_H-bdef.txt##L59)
 
 Implementation (draft-aware reads in LOCAL MODE + associations):
 - [`validateItemsSum implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L120-L220)
@@ -121,24 +121,24 @@ Implementation (draft-aware reads in LOCAL MODE + associations):
 ### 8) Determinations (Auto-fill + consistency) 🧠
 #### 8.1 SalesOrder generation (Header)
 - Determination: `createDocument on save { create; update; field SalesOrder; }`
-- Defined here: [`createDocument`](source/zr_dvso_h.bdef.asbdef#L51)
+- Defined here: [`createDocument`](source/ZR_DVSO_H-bdef.txt##L51)
 - Implemented here: [`createDocument implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L288-L331)
 
 #### 8.2 Default initialization (Header)
 - Determination: `setInitialValues on modify { create; }`
-- Defined here: [`setInitialValues`](source/zr_dvso_h.bdef.asbdef#L52)
+- Defined here: [`setInitialValues`](source/ZR_DVSO_H-bdef.txt##L52)
 - Implemented here: [`setInitialValues implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L582-L604)
 
 #### 8.3 Item numbering (Items)
 Assigns incremental `ItemNo` (000010, 000020, …):
 - Determination: `createItem on modify { create; field ItemNo; }`
-- Defined here: [`Item~createItem`](source/zr_dvso_h.bdef.asbdef#L119)
+- Defined here: [`Item~createItem`](source/ZR_DVSO_H-bdef.txt##L119)
 - Implemented here: [`createItem implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L16-L115)
 
 #### 8.4 Item currency inheritance (Items) 💶
 New items inherit `CurrencyCode` from the header (draft-aware, local mode):
 - Determination: `getCurrency on modify { create; }`
-- Defined here: [`Item~getCurrency`](source/zr_dvso_h.bdef.asbdef#L120)
+- Defined here: [`Item~getCurrency`](source/ZR_DVSO_H-bdef.txt##L120)
 - Implemented here: [`getCurrency implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L182-L238)
 
 ---
@@ -150,7 +150,7 @@ Actions are defined on Header:
 - **CalculateAmounts** → sets `GrossAmount = NetAmount + TaxAmount`
 
 Defined here:
-- [`Header actions`](source/zr_dvso_h.bdef.asbdef#L39-L42)
+- [`Header actions`](source/ZR_DVSO_H-bdef.txt##L39-L42)
 
 Exposed in projection behavior (required for proper UI behavior):
 - [`use action Approve/Reject/CalculateAmounts`](source/zc_dvso_h.bdef.asbdef#L16-L19)
