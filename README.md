@@ -67,7 +67,7 @@ Access control artifacts included:
 ### 4) Value Helps (F4) + Text Associations
 Value helps are wired in the projection views using `@Consumption.valueHelpDefinition` and text associations (`@ObjectModel.text.element`):
 
-- Header value helps + text: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L17-L27)
+- Header value helps + text: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L20-L30)
 - Item value helps (product/unit/etc.): [`ZC_DVSO_I`](source/ZC_DVSO_I-ddls.txt#L14-L19)
 
 ---
