@@ -12,4 +12,3 @@ Service binding (artifact):
 ```
 todo
 ```
----
