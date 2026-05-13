@@ -11,10 +11,25 @@ The Object Page displays:
 
 CDS implementation:
 - Items SUM view: [`ZI_DVSO_SUM`](../../source/ZI_DVSO_SUM-ddls.txt#L1-L18)
+```
+todo
+```
+---
 - KPI view (header + join to SUM): [`ZI_DVSO_KPI`](../../source/ZI_DVSO_KPI-ddls.txt#L1-L44)
-
+```
+todo
+```
+---
 - Header UI annotations: [`ZC_DVSO_H.ddlx`](../../source/ZC_DVSO_H-ddlx.txt#L13-L14)
+```
+todo
+```
+---
 - DataPont UI annotation: [`DataPoint`](../../source/ZC_DVSO_H-ddlx.txt#L63-L80)
+```
+todo
+```
+---
 
 > [!WARNING]
 > In managed draft, a CDS KPI can look misleading if it reads only active data while the user is editing draft records.
