@@ -38,7 +38,7 @@ This app uses **managed RAP with draft**, so users can:
 - Get consistent locking + ETags
 
 Root behavior definition (draft + etag/locks + validations + actions + mappings):
-- [`ZR_DVSO_H.bdef`](source/zr_dvso_h.bdef.asbdef#L1-L144)
+- [`ZR_DVSO_H.bdef`](source/ZR_DVSO_H-bdef.txt.#L1-L144)
 
 Highlights:
 - Draft + strict mode: [`managed implementation / strict / with draft`](source/zr_dvso_h.bdef.asbdef#L1-L12)
