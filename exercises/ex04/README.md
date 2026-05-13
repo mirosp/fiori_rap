@@ -14,7 +14,10 @@ Root behavior definition (draft + etag/locks + validations + actions + mappings)
 - [`ZR_DVSO_H.bdef`](source/zr_dvso_h.bdef.asbdef#L1-L144)
 
 Highlights:
-- Draft + strict mode: [`managed implementation / strict / with draft`](source/zr_dvso_h.bdef.asbdef#L1-L12)
+- Draft + strict mode: `managed implementation / strict / with draft`
+---
+adad as
+---
 - ETag + locks: [`etag master` + `lock master`](source/zr_dvso_h.bdef.asbdef#L10-L11)
 - Composition to items (draft-enabled): [`association _Items { create; with draft; }`](source/zr_dvso_h.bdef.asbdef#L36-L37)
 - Draft actions: [`Activate/Discard/Edit/Resume`](source/zr_dvso_h.bdef.asbdef#L55-L57)
