@@ -28,7 +28,6 @@ authorization master ( global )
   DocumentDate,
   CurrencyCode;
 
-
   create;
   update;
   delete;
@@ -122,8 +121,6 @@ etag master LocalLastChangedAt
 
   // Validations
   validation validateItemsSum on save { create; update; field NetAmount; }
-
-
 
   mapping for ZDV_SO_I
   {
