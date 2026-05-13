@@ -10,7 +10,7 @@ The Object Page displays:
 - `ConsumptionCriticality` (0 neutral, 1 red, 2 amber, 3 green)
 
 CDS implementation:
-- Items SUM view: [`ZI_DVSO_SUM`](source/zi_dvso_sum.ddls.asddls#L1-L18)
+- Items SUM view: [`ZI_DVSO_SUM`](source/ZI_DVSO_SUM-ddls.txt#L1-L18)
 - KPI view (header + join to SUM): [`ZI_DVSO_KPI`](source/zi_dvso_kpi.ddls.asddls#L1-L44)
 
 - Header UI annotations: [`ZC_DVSO_H.ddlx`](source/zc_dvso_h.ddlx.asddlxs#L13-L14)
