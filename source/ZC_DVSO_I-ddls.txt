@@ -15,7 +15,7 @@ define view entity ZC_DVSO_I
       @Consumption.valueHelpDefinition: [ { entity: { name: 'ZI_Supplement_StdVH', element: 'SupplementID' }, useForValidation: true } ]
       ProductID,
 
-//      @Semantics.text: true
+      @Semantics.text: true
       _Product.SupplementText as ProductName,
 
       @Semantics.quantity.unitOfMeasure: 'QuantityUnit'
@@ -45,7 +45,7 @@ define view entity ZC_DVSO_I
       _BaseEntity,   
 
       /* Asociaciones */
-//      _Product,
+      _Product,
       _Header : redirected to parent ZC_DVSO_H
 }
 
