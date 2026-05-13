@@ -198,5 +198,3 @@ define view entity ZC_DVSO_I
 Redirected composition is visible in the header projection:
 - `_Items redirected to composition child ZC_DVSO_I`: `ZC_DVSO_H`
 
-```
-```
