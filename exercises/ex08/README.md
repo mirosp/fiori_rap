@@ -15,9 +15,9 @@ Defined here:
 
 Item validation:
 - `validateItemsSum on save { create; update; field NetAmount; }`
-- Defined here: `Item~validateItemsSum`](source/ZR_DVSO_H-bdef.txt#L122-L123)
-- Orchestrated via draft prepare: [`Prepare triggers Item~validateItemsSum`](source/ZR_DVSO_H-bdef.txt#L59)
+- Defined here: [`Item~validateItemsSum`](../../source/ZR_DVSO_H-bdef.txt#L122-L123)
+- Orchestrated via draft prepare: [`Prepare triggers Item~validateItemsSum`](../../source/ZR_DVSO_H-bdef.txt#L59)
 
 Implementation (draft-aware reads in LOCAL MODE + associations):
-- [`validateItemsSum implementation`](source/zbp_r_dvso_h.clas.locals_imp.abap#L120-L220)
+- [`validateItemsSum implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L120-L220)
 
