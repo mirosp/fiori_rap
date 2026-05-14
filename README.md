@@ -34,6 +34,9 @@ Redirected composition is visible in the header projection:
 ---
 
 ### 2) Managed Draft Transactional Behavior (Create/Update/Delete + Draft lifecycle)
+
+Go to [`EXERCISE`](exercises/ex04/README.md)
+
 This app uses **managed RAP with draft**, so users can:
 - Create/change data in draft
 - Validate on save (draft prepare)
@@ -59,6 +62,9 @@ Projection behavior (exposes actions to the UI):
 ---
 
 ### 3) Authorizations (DCL)
+
+Go to [`EXERCISE`](exercises/ex05/README.md)
+
 Access control artifacts included:
 - Root DCL: [`ZR_DVSO_H.dcls`](source/ZR_DVSO_H-dcls.txt#L1-L6)
 - Projection DCL: [`ZC_DVSO_H.dcls`](source/ZC_DVSO_H-dcls.txt#L1-L6)
@@ -68,6 +74,9 @@ Access control artifacts included:
 ---
 
 ### 4) Value Helps (F4) + Text Associations
+
+Go to [`EXERCISE`](exercises/ex06/README.md)
+
 Value helps are wired in the projection views using `@Consumption.valueHelpDefinition` and text associations (`@ObjectModel.text.element`):
 
 - Header value helps + text: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L20-L30)
@@ -76,6 +85,9 @@ Value helps are wired in the projection views using `@Consumption.valueHelpDefin
 ---
 
 ### 5) KPI: Budget Consumption (Items Sum vs Header NetAmount) + Criticality 🚦
+
+Go to [`EXERCISE`](exercises/ex07/README.md)
+
 The Object Page displays:
 - `ItemsTotalNetAmount` (SUM of item net amounts)
 - `RemainingAmount` (header net amount minus items sum)
@@ -94,14 +106,17 @@ CDS implementation:
 
 ---
 
-### 6) Donut Chart 🍩 (Fiori elements)
+### 5.1) Donut Chart 🍩 (Fiori elements)
 Chart and UI metadata are defined through annotations (no custom UI coding):
 
 - Item UI annotations: [`ZC_DVSO_I.ddlx`](source/ZC_DVSO_I-ddlx.txt#L1-L14)
 
 ---
 
-### 7) Validations on Save (Business Rules) ✅❌
+### 6) Validations on Save (Business Rules) ✅❌
+
+Go to [`EXERCISE`](exercises/ex08/README.md)
+
 Header validations (root behavior):
 - `validateCustomer` (SoldToParty mandatory)
 - `validateAmounts` (NetAmount > 0, TaxAmount >= 0)
@@ -121,24 +136,27 @@ Implementation (draft-aware reads in LOCAL MODE + associations):
 
 ---
 
-### 8) Determinations (Auto-fill + consistency) 🧠
-#### 8.1 SalesOrder generation (Header)
+### 7) Determinations (Auto-fill + consistency) 🧠
+
+Go to [`EXERCISE`](exercises/ex09/README.md)
+
+#### 7.1 SalesOrder generation (Header)
 - Determination: `createDocument on save { create; update; field SalesOrder; }`
 - Defined here: [`createDocument`](source/ZR_DVSO_H-bdef.txt##L51)
 - Implemented here: [`createDocument implementation`](source/ZBP_R_DVSO_H-clas.txt#L288-L331)
 
-#### 8.2 Default initialization (Header)
+#### 7.2 Default initialization (Header)
 - Determination: `setInitialValues on modify { create; }`
 - Defined here: [`setInitialValues`](source/ZR_DVSO_H-bdef.txt##L52)
 - Implemented here: [`setInitialValues implementation`](source/ZBP_R_DVSO_H-clas.txt#L582-L604)
 
-#### 8.3 Item numbering (Items)
+#### 7.3 Item numbering (Items)
 Assigns incremental `ItemNo` (000010, 000020, …):
 - Determination: `createItem on modify { create; field ItemNo; }`
 - Defined here: [`Item~createItem`](source/ZR_DVSO_H-bdef.txt##L119)
 - Implemented here: [`createItem implementation`](source/ZBP_R_DVSO_H-clas.txt#L16-L115)
 
-#### 8.4 Item currency inheritance (Items) 💶
+#### 7.4 Item currency inheritance (Items) 💶
 New items inherit `CurrencyCode` from the header (draft-aware, local mode):
 - Determination: `getCurrency on modify { create; }`
 - Defined here: [`Item~getCurrency`](source/ZR_DVSO_H-bdef.txt##L120)
@@ -147,6 +165,9 @@ New items inherit `CurrencyCode` from the header (draft-aware, local mode):
 ---
 
 ### 9) Instance Actions (Approve / Reject / CalculateAmounts) ⚡
+
+Go to [`EXERCISE`](exercises/ex10/README.md)
+
 Actions are defined on Header:
 - **Approve** → sets `OverallStatus = 'A'`
 - **Reject** → sets `OverallStatus = 'R'`
@@ -171,6 +192,9 @@ Implemented here:
 ---
 
 ## OData V4 Exposure (Service Definition + Binding)
+
+Go to [`EXERCISE`](exercises/ex11/README.md)
+
 Service definition:
 - [`ZUI_DVSO_H_O4.srvd`](source/ZUI_DVSO_H_O4-srvd.txt#L1-L13)
 
