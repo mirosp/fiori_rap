@@ -10,7 +10,7 @@ Actions are defined on Header:
 - **CalculateAmounts** → sets `GrossAmount = NetAmount + TaxAmount`
 
 Defined here:
-- [`Header actions`](../../source/ZR_DVSO_H-bdef.txt#L39-L42)
+- [`Header actions`](../../source/ZR_DVSO_H-bdef.txt#L39-L41)
 
 Exposed in projection behavior (required for proper UI behavior):
 - [`use action Approve/Reject/CalculateAmounts`](../../source/ZC_DVSO_H-bdef.txt#L16-L19)
