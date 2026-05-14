@@ -109,7 +109,18 @@ define view entity ZI_DVSO_KPI
 Chart and UI metadata are defined through annotations (no custom UI coding):
 
 - Item UI annotations: [`ZC_DVSO_I.ddlx`](../../source/ZC_DVSO_I-ddlx.txt#L1-L14)
-```
-todo
+```ABAP
+@UI.chart: [
+  {
+    qualifier: 'itemShareChart',
+    title: 'Item Share',
+    description: 'Item amount in relation to total travel price',
+    chartType: #DONUT,
+    measures: ['NetAmount'],
+    measureAttributes: [
+      { measure: 'NetAmount', role: #AXIS_1, asDataPoint: true }
+    ]
+  }
+]
 ```
 ---
