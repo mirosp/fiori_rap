@@ -48,12 +48,25 @@ You are through with the definition of the determination.
 
 #### 3 Item numbering (Items)
 Assigns incremental `ItemNo` (000010, 000020, …):
+- Follow the steps from point 1
 - Determination: `createItem on modify { create; field ItemNo; }`
 - Defined here: [`Item~createItem`](../../source/ZR_DVSO_H-bdef.txt#L23)
 - Implemented here: [`createItem implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L33-L128)
 
+   ```ABAP 
+      determination createItem on modify { create; field ItemNo; }
+   ```
+
+   <!-- ![Travel BO Definition](images/determination_2.png) -->
+   <img src="images/determination_2.png" alt="Travel BO Definition" width="60%"> 
+
 #### 4 Item currency inheritance (Items) 💶
 New items inherit `CurrencyCode` from the header (draft-aware, local mode):
+- Follow the steps from point 1
 - Determination: `getCurrency on modify { create; }`
 - Defined here: [`Item~getCurrency`](../../source/ZR_DVSO_H-bdef.txt#L27)
 - Implemented here: [`getCurrency implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L182-L232)
+
+   ```ABAP 
+      determination getCurrency on modify { create; }
+   ```
