@@ -87,8 +87,16 @@ define view entity ZI_DVSO_KPI
 ```
 ---
 - DataPont UI annotation: [`DataPoint`](../../source/ZC_DVSO_H-ddlx.txt#L63-L71)
-```
-todo
+```ABAP
+  @UI.dataPoint: {
+      qualifier: 'KPI_CONSUMO',
+      title: 'Importe de ítems / Total del pedido',
+      description: 'Suma de items vs total',
+      visualization: #PROGRESS,
+      targetValueElement: 'NetAmount',
+      criticality: 'ConsumptionCriticality'
+  }
+  itemstotalnetamount;
 ```
 ---
 
