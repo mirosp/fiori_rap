@@ -34,8 +34,8 @@ Defined here:
   action CalculateAmounts result [1] $self;
 ```
 The result should look like this:   
-   <!-- ![CDS BO Behavior Definition](../../images/b10.png)  -->
-   <img src="../../images/b10.png" alt="CDS BO Behavior Definition" width="60%">
+   <!-- ![CDS BO Behavior Definition](images/action_1.png)  -->
+   <img src="images/action_1.png" alt="CDS BO Behavior Definition" width="60%">
    
    **Short explanation**:  
    - The name of the instance action is specified after the keyword **`action`**
@@ -87,6 +87,10 @@ Exposed in projection behavior (required for proper UI behavior):
   use action Reject;
   use action CalculateAmounts;
 ```
+
+The result should look like this:   
+   <!-- ![CDS BO Behavior Definition](images/action_2.png)  -->
+   <img src="images/action_2.png" alt="CDS BO Behavior Definition" width="60%">
 
 Implemented here:
 - [`Approve`](../../source/ZBP_R_DVSO_H-clas.txt#L334-L374)
