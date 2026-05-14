@@ -52,4 +52,4 @@ Assigns incremental `ItemNo` (000010, 000020, …):
 New items inherit `CurrencyCode` from the header (draft-aware, local mode):
 - Determination: `getCurrency on modify { create; }`
 - Defined here: [`Item~getCurrency`](../../source/ZR_DVSO_H.bdef.asbdef#L120)
-- Implemented here: [`getCurrency implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L182-L238)
+- Implemented here: [`getCurrency implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L182-L232)
