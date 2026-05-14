@@ -3,6 +3,11 @@
 ## Introduction
 In this hands-on exercise, you will handle a Determinations.
 
+### About Determinations  
+> A determination is an optional part of the business object behavior that modifies instances of business objects based on trigger conditions. A determination is implicitly invoked by the RAP framework if the trigger condition of the determination is fulfilled. Trigger conditions can be modify operations and modified fields.   
+>  
+> **Further reading**: [Determinations](https://help.sap.com/viewer/923180ddb98240829d935862025004d6/Cloud/en-US/6edb0438d3e14d18b3c403c406fbe209.html)
+
 ### Determinations (Auto-fill + consistency) 🧠
 #### 1 SalesOrder generation (Header)
 - Determination: `createDocument on save { create; update; field SalesOrder; }`
