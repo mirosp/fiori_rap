@@ -15,7 +15,7 @@ define role ZR_DVSO_H {
 }
 ```
 ---
-- Projection DCL: [`ZC_DVSO_H.dcls`](../../source/ZC_DVSO_H-dcls.txt#L1-L6)
+- Projection DCL: [`ZC_DVSO_H.dcls`](../../source/ZC_DVSO_H-dcls.txt#L1-L7)
 ```ABAP
 @EndUserText.label: 'ZC_DVSO_H'
 @MappingRole: true
