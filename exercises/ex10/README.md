@@ -52,14 +52,11 @@ The result should look like this:
 
    Set the cursor on the action name, **`Approve/Reject/CalculateAmounts`**, and press **Ctrl+1** to open the **Quick Assist** view.
   
-    Select the entry _**`Add methods for actions of entity zrap100_r_traveltp_### ...`**_ in the view to add the required method to the local handler class.   
+    Select the entry _**`Add methods for actions of entity ZR_DVSO_H`**_ in the view to add the required method to the local handler class.   
       
 4. Save ![save icon](../../images/adt_save.png) the changes.
 
-5. Set the cursor on the method name, **`Approve/Reject/CalculateAmounts`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](../../images/adt_class.png)**`ZRAP100_BP_TRAVELTP_###`**.   
-
-   ![Travel BO Behavior Pool](../../images/b12a.png)
-   <!-- <img src="../../images/b12a.png" alt="CDS BO Behavior Pool" width="60%">   -->
+5. Set the cursor on the method name, **`Approve/Reject/CalculateAmounts`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](../../images/adt_class.png)**`ZBP_R_DVSO_H`**.   
 
 6. In the declaration part set the cursor on the method name, **`Approve/Reject/CalculateAmounts`**, press **F2**, and examine the full method interface.   
   
