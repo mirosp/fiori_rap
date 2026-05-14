@@ -30,13 +30,8 @@ CLASS lhc_item DEFINITION INHERITING FROM cl_abap_behavior_handler.
 ENDCLASS.
 
 CLASS lhc_item IMPLEMENTATION.
-
-***********************************************************************
-* Crea ID para el Item Number
-***********************************************************************
   METHOD createItem.
 
-    " Leer el ítem recién creado (draft)
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Item
         FIELDS ( ItemNo SoUUID )
@@ -47,21 +42,18 @@ CLASS lhc_item IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Recuperamos el SoUUID Header
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Item BY \_Header
         FIELDS ( SoUUID )
         WITH CORRESPONDING #( new_items )
       RESULT DATA(header).
 
-    " Leer todos los items del sales order usando %tky del Header
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Header BY \_Items
         FIELDS ( SoUUID ItemNo )
         WITH VALUE #( FOR tr IN header ( %tky = tr-%tky ) )
       RESULT DATA(all_items).
 
-    " Max ItemNo por SoUUID
     TYPES: BEGIN OF ty_max,
              SoUUID TYPE sysuuid_x16,
              MaxNo  TYPE i,
@@ -83,13 +75,11 @@ CLASS lhc_item IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
-    " Asignar números a los items nuevos sin ItemNo (000010, 000020...)
     DATA lt_upd TYPE TABLE FOR UPDATE zr_dvso_i.
 
     LOOP AT new_items ASSIGNING FIELD-SYMBOL(<ch>)
       WHERE ItemNo IS INITIAL.
 
-      " Asegurar entrada en tabla de max
       READ TABLE lt_max ASSIGNING <m> WITH KEY SoUUID = <ch>-SoUUID.
       IF sy-subrc <> 0.
         INSERT VALUE ty_max( SoUUID = <ch>-SoUUID MaxNo = 0 )
@@ -111,7 +101,6 @@ CLASS lhc_item IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Persistir en el buffer draft (LOCAL MODE)
     MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Item
         UPDATE FIELDS ( ItemNo )
@@ -119,7 +108,6 @@ CLASS lhc_item IMPLEMENTATION.
       FAILED   DATA(lt_failed)
       REPORTED DATA(lt_reported).
 
-    "Checkear
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Item
           FIELDS ( ItemNo )
@@ -132,12 +120,8 @@ CLASS lhc_item IMPLEMENTATION.
 
   ENDMETHOD.
 
-**********************************************************************
-* Valida que la suma total de los Items no supere el total
-**********************************************************************
   METHOD validateItemsSum.
 
-    " Leemos todos los items a guardar
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Item
             FIELDS ( ItemUUID SoUUID NetAmount CurrencyCode )
@@ -148,22 +132,18 @@ CLASS lhc_item IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Recuperamos el amount total
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Item BY \_Header
             FIELDS ( SoUUID NetAmount CurrencyCode )
             WITH CORRESPONDING #( items_changed )
         RESULT DATA(sales_order).
 
-    " Leer todos los items del Sales Order usando %tky del Header (no SoUUID)
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Header BY \_Items
         FIELDS ( SoUUID NetAmount CurrencyCode )
             WITH VALUE #( FOR head IN sales_order ( %tky = head-%tky  ) )
         RESULT DATA(all_items).
 
-
-    " Sumar por cada Sales Order
     TYPES: BEGIN OF ty_sum,
              SoUUID    TYPE sysuuid_x16,
              SumAmount TYPE zr_dvso_i-NetAmount,
@@ -178,7 +158,6 @@ CLASS lhc_item IMPLEMENTATION.
       <s>-SumAmount = <s>-SumAmount + <ai>-NetAmount.
     ENDLOOP.
 
-    " Validamos y marcamos error en el item cambiado
     LOOP AT items_changed INTO DATA(ch).
       READ TABLE sales_order INTO DATA(so) WITH KEY SoUUID = ch-SoUUID.
       READ TABLE sums        INTO DATA(sm) WITH KEY SoUUID = ch-SoUUID.
@@ -202,7 +181,6 @@ CLASS lhc_item IMPLEMENTATION.
 **********************************************************************
   METHOD getCurrency.
 
-    " Leemos todos los items a guardar
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Item
             FIELDS ( ItemUUID SoUUID NetAmount CurrencyCode )
@@ -213,7 +191,6 @@ CLASS lhc_item IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Recuperamos el currency Code
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
         ENTITY Item BY \_Header
             FIELDS ( SoUUID CurrencyCode )
@@ -245,7 +222,6 @@ CLASS lhc_item IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Actualizar solo el campo SalesOrder
     MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
        ENTITY Item
          UPDATE FIELDS ( CurrencyCode )
@@ -303,12 +279,8 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Crea ID para el Documento de Venta
-***********************************************************************
   METHOD createDocument.
 
-    " Leer instancias afectadas
     READ ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Header
         FIELDS ( SalesOrder SoUUID )
@@ -318,13 +290,11 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
     DATA lt_upd TYPE TABLE FOR UPDATE zr_dvso_h.
 
     LOOP AT lt_header ASSIGNING FIELD-SYMBOL(<h>).
-
-      " Si ya viene informado, no lo tocamos
       IF <h>-SalesOrder IS NOT INITIAL.
         CONTINUE.
       ENDIF.
 
-      " SalesOrder = 'SO' + 8 hex del UUID => 10 chars
+      " SalesOrder = 'SO' + 8 hex UUID => 10 chars
       DATA(lv_so) = |SO{ <h>-SoUUID+0(8) }|.
 
       APPEND VALUE #(
@@ -338,7 +308,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    " Actualizar solo el campo SalesOrder
     MODIFY ENTITIES OF zr_dvso_h IN LOCAL MODE
       ENTITY Header
         UPDATE FIELDS ( SalesOrder )
@@ -348,9 +317,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Aprovar Sales Order
-***********************************************************************
   METHOD Approve.
 
     " Read current data
@@ -391,9 +357,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Calcular Amount
-***********************************************************************
   METHOD CalculateAmounts.
 
     " Read current data
@@ -434,9 +397,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Rechazar Sales Order
-***********************************************************************
   METHOD Reject.
 
     " Read current data
@@ -477,9 +437,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Validar Amount
-***********************************************************************
   METHOD validateAmounts.
 
     " Read amount data
@@ -512,9 +469,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Validar CurrencyCode
-***********************************************************************
   METHOD validateCurrency.
 
     " Read currency data
@@ -537,9 +491,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Validar Customer
-***********************************************************************
   METHOD validateCustomer.
 
     " Read customer data
@@ -562,9 +513,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Validar Document Date
-***********************************************************************
   METHOD validateDocumentDate.
 
     " Read document date data
@@ -597,9 +545,6 @@ CLASS lhc_zr_dvso_h IMPLEMENTATION.
 
   ENDMETHOD.
 
-***********************************************************************
-* Inicializar Valores Header - Sales Order
-***********************************************************************
   METHOD setInitialValues.
 
     " Read sales order data for new entries
