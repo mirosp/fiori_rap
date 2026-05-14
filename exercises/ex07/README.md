@@ -33,8 +33,51 @@ group by SoUUID, CurrencyCode
 ```
 ---
 - KPI view (header + join to SUM): [`ZI_DVSO_KPI`](../../source/ZI_DVSO_KPI-ddls.txt#L1-L44)
-```
-todo
+```ABAP
+@EndUserText.label: 'KPI Header'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+
+// Header + Join sum of items
+define view entity ZI_DVSO_KPI
+
+  as select from ZR_DVSO_H as H
+  
+    left outer join ZI_DVSO_SUM as S        // Suma total ( NetAmount ) --> Sales Order
+      on  S.SoUUID       = H.SoUUID
+      and S.CurrencyCode = H.CurrencyCode
+      
+{
+
+  key H.SoUUID,
+      H.CurrencyCode,
+
+   // Total Net Items    
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  coalesce(
+    S.ItemsTotalNetAmount,
+    cast( 0 as abap.curr( 23, 2 ) )
+  ) as ItemsTotalNetAmount,
+
+  // Net Remaining to 100% (Header)
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  cast(
+    H.NetAmount
+    - coalesce( S.ItemsTotalNetAmount, cast( 0 as abap.curr( 23, 2 ) ) )
+    as abap.curr( 23, 2 )
+  ) as RemainingAmount,
+
+// Criticality ---> 0 Neutral | 1 Critical |  2 Warning | 3 Good
+  cast(     
+    case
+      when H.NetAmount = 0 then 0
+      when coalesce( S.ItemsTotalNetAmount, cast( 0 as abap.curr( 23, 2 ) ) ) > H.NetAmount then 1
+      when cast( coalesce( S.ItemsTotalNetAmount, cast( 0 as abap.curr( 23, 2 ) ) ) as abap.dec( 31, 2 ) ) * 10
+         >= cast( H.NetAmount as abap.dec( 31, 2 ) ) * 8 then 2
+      else 3
+    end
+    as abap.int1
+  ) as ConsumptionCriticality
+}
 ```
 ---
 - Header UI annotations: [`ZC_DVSO_H.ddlx`](../../source/ZC_DVSO_H-ddlx.txt#L13-L14)
