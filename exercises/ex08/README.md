@@ -13,6 +13,76 @@ Header validations (root behavior):
 Defined here:
 - [`ZR_DVSO_H validations`](../../source/ZR_DVSO_H-bdef.txt#L43-L47)
 
+1. Open your behavior definition ![behaviordefinition](../../images/adt_bdef.png) **`ZR_DVSO_H`**  
+
+2. Because empty values will not be accepted for the fields **`SoldToParty`**, **`DocumentDate`**, and **`CurrencyCode`**, specify them as _mandatory_ field 
+   by adding the following code snippet after the determination as shown on the screenshot below.
+ 
+   <pre lang="ABAP">  
+    field ( mandatory )
+    SoldToParty,
+    DocumentDate,
+    CurrencyCode;  
+   </pre>   
+
+   Your source code should look like this:   
+
+   <!-- ![validation](images/new18a.png)    -->
+   <img src="images/new18a.png" alt="validation" width="60%"> 
+
+3. Define the validations **`validateCustomer`** and **`validateDates`**.
+     
+   For that, add the following code snippet after the determination as shown on the screenshot below.
+   
+   <pre lang="ABAP"> 
+    validation validateCustomer on save { create; update; field SoldToParty; }
+    validation validateAmounts on save { create; update; field NetAmount, TaxAmount, GrossAmount; }
+    validation validateDocumentDate on save { create; update; field DocumentDate; }
+    validation validateCurrency on save { create; update; field CurrencyCode; }
+   </pre>          
+
+4. In order to have draft instances being checked by validations and determinations being executed before they become active, they have to be specified for the **`draft determine action prepare`** in the behavior definition.
+  
+   Replace the code line **`draft determine action Prepare;`** with the following code snippet as shown on the screenshot below
+
+   <pre lang="ABAP"> 
+   draft determine action Prepare
+   {
+    validation Item~validateItemsSum;
+    validation validateCustomer;
+    validation validateAmounts;
+    validation validateDocumentDate;
+    validation validateCurrency;
+   </pre>     
+     
+   Your source code should look like this: 
+   
+   <!-- ![validation](images/new18.png) -->
+   <img src="images/new18.png" alt="validation" width="60%">       
+     
+   **Short explanation**:    
+   - Validations are always invoked during the save and specified with the keyword `validateCustomer on save`.                
+    
+   **ℹ Hint**:    
+   > In case a validation should be invoked at every change of the BO entity instance, then the trigger conditions `create`and `update` 
+   > must be specified: e.g. `validation validateCustomer on save { create; update; }`
+ 
+5. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.
+      
+6. Add the appropriate **`FOR VALIDATE ON SAVE`** methods to the local handler class of the behavior pool of the _Travel_ BO entity via quick fix.  
+   
+   For that, set the cursor on one of the validation names and press **Ctrl+1** to open the **Quick Assist** view and select the entry _**`Add all <n> missing methods of entity ...`**_.
+   
+   As a result, the **`FOR VALIDATE ON SAVE`** methods **`validateCustomer`** and **`validateDates`** will be added to the local handler class `lcl_handler` of the behavior pool of the _Travel_ BO entity ![class icon](../../images/adt_class.png)`ZBP_R_DVSO_H`.       
+   
+   <!-- ![Travel BO Behavior Pool](images/new19.png)  -->
+   <img src="images/new19.png" alt="validation" width="90%">   
+
+7. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.
+
+> Hint:  
+> If you get an error message in the behavior implementation `The entity "ZR_DVSO_H" does not have a validation "VALIDATECUSTOMER".` try to activate the behvavior definition once again.
+
 Item validation:
 - `validateItemsSum on save { create; update; field NetAmount; }`
 - Defined here: [`Item~validateItemsSum`](../../source/ZR_DVSO_H-bdef.txt#L122-L123)
