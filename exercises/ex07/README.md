@@ -81,7 +81,7 @@ define view entity ZI_DVSO_KPI
 ```
 ---
 - Header UI annotations: [`ZC_DVSO_H.ddlx`](../../source/ZC_DVSO_H-ddlx.txt#L13-L14)
-```ABAP
+```
   @UI.facet: [
     { id: 'KPI_CONSUMO', purpose: #HEADER, type: #DATAPOINT_REFERENCE, label: 'Consumo', position: 5, targetQualifier: 'KPI_CONSUMO' }]
 ```
