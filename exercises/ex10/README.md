@@ -93,7 +93,7 @@ The result should look like this:
    <img src="images/action_2.png" alt="CDS BO Behavior Definition" width="60%">
 
 Implemented here:
-- [`Approve`](../../source/ZBP_R_DVSO_H-clas.txt#L334-L374)
+- [`Approve`](../../source/ZBP_R_DVSO_H-clas.txt#L320-L358)
 - [`Reject`](../../source/ZBP_R_DVSO_H-clas.txt#L419-L460)
 - [`CalculateAmounts`](../../source/ZBP_R_DVSO_H-clas.txt#L376-L417)
 
