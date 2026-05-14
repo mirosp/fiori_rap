@@ -3,6 +3,14 @@
 ## Introduction
 In this hands-on exercise, you will handle a Validations.
 
+### About Validations
+
+A validation is an optional part of the business object behavior that checks the consistency of business object instances based on trigger conditions. 
+
+A validation is implicitly invoked by the business object’s framework if the trigger condition of the validation is fulfilled. Trigger conditions can be `MODIFY` operations and modified fields. The trigger condition is evaluated at the trigger time, a predefined point during the BO runtime. An invoked validation can reject inconsistent instance data from being saved by passing the keys of failed instances to the corresponding table in the `FAILED` structure. Additionally, a validation can return messages to the consumer by passing them to the corresponding table in the `REPORTED` structure.
+
+> **Further reading**: [Validations](https://help.sap.com/viewer/923180ddb98240829d935862025004d6/Cloud/en-US/171e26c36cca42699976887b4c8a83bf.html)
+
 ### Validations on Save (Business Rules) ✅❌
 Header validations (root behavior):
 - `validateCustomer` (SoldToParty mandatory)
