@@ -94,7 +94,7 @@ The result should look like this:
 
 Implemented here:
 - [`Approve`](../../source/ZBP_R_DVSO_H-clas.txt#L320-L358)
-- [`Reject`](../../source/ZBP_R_DVSO_H-clas.txt#L419-L460)
+- [`Reject`](../../source/ZBP_R_DVSO_H-clas.txt#L400-L438)
 - [`CalculateAmounts`](../../source/ZBP_R_DVSO_H-clas.txt#L376-L417)
 
 > [!IMPORTANT]
