@@ -40,7 +40,7 @@ You are through with the definition of the determination.
 - Follow the steps from point 1
 - Determination: `setInitialValues on modify { create; }`
 - Defined here: [`setInitialValues`](../../source/ZR_DVSO_H-bdef.txt#L51)
-- Implemented here: [`setInitialValues implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L582-L604)
+- Implemented here: [`setInitialValues implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L548-L567)
 
    ```ABAP 
        determination setInitialValues on modify { create; }
