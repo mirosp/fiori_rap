@@ -27,8 +27,8 @@ Defined here:
 
    Your source code should look like this:   
 
-   <!-- ![validation](images/new18a.png)    -->
-   <img src="images/new18a.png" alt="validation" width="60%"> 
+   <!-- ![validation](images/validation_1.png)    -->
+   <img src="images/validation_1.png" alt="validation" width="60%"> 
 
 3. Define the validations **`validateCustomer`** and **`validateDates`**.
      
@@ -53,12 +53,13 @@ Defined here:
     validation validateAmounts;
     validation validateDocumentDate;
     validation validateCurrency;
+   }
    </pre>     
      
    Your source code should look like this: 
    
-   <!-- ![validation](images/new18.png) -->
-   <img src="images/new18.png" alt="validation" width="60%">       
+   <!-- ![validation](images/validation_2.png) -->
+   <img src="images/validation_2.png" alt="validation" width="60%">       
      
    **Short explanation**:    
    - Validations are always invoked during the save and specified with the keyword `validateCustomer on save`.                
@@ -73,10 +74,7 @@ Defined here:
    
    For that, set the cursor on one of the validation names and press **Ctrl+1** to open the **Quick Assist** view and select the entry _**`Add all <n> missing methods of entity ...`**_.
    
-   As a result, the **`FOR VALIDATE ON SAVE`** methods **`validateCustomer`** and **`validateDates`** will be added to the local handler class `lcl_handler` of the behavior pool of the _Travel_ BO entity ![class icon](../../images/adt_class.png)`ZBP_R_DVSO_H`.       
-   
-   <!-- ![Travel BO Behavior Pool](images/new19.png)  -->
-   <img src="images/new19.png" alt="validation" width="90%">   
+   As a result, the **`FOR VALIDATE ON SAVE`** methods **`validateCustomer`** and **`validateDates`** will be added to the local handler class `lcl_handler` of the behavior pool of the _Travel_ BO entity ![class icon](../../images/adt_class.png)`ZBP_R_DVSO_H`.        
 
 7. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.
 
