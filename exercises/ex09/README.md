@@ -18,7 +18,6 @@ In this hands-on exercise, you will handle a Determinations.
 
    ```ABAP 
        determination createDocument on save { create; update; field SalesOrder; }
-       determination setInitialValues on modify { create; }
    ```
    
    <!-- ![Travel BO Definition](images/determination_1.png) -->
@@ -38,9 +37,14 @@ In this hands-on exercise, you will handle a Determinations.
 You are through with the definition of the determination.
 
 #### 2 Default initialization (Header)
+- Follow the steps from point 1
 - Determination: `setInitialValues on modify { create; }`
 - Defined here: [`setInitialValues`](../../source/ZR_DVSO_H.bdef.txt#L52)
 - Implemented here: [`setInitialValues implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L582-L604)
+
+   ```ABAP 
+       determination setInitialValues on modify { create; }
+   ```
 
 #### 3 Item numbering (Items)
 Assigns incremental `ItemNo` (000010, 000020, …):
