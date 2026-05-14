@@ -12,7 +12,7 @@ In this hands-on exercise, you will handle a Determinations.
 #### 1 SalesOrder generation (Header)
 - Determination: `createDocument on save { create; update; field SalesOrder; }`
 - Defined here: [`createDocument`](../../source/ZR_DVSO_H-bdef.txt#L50)
-- Implemented here: [`createDocument implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L288-L331)
+- Implemented here: [`createDocument implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L282-L318)
 
 1. Go to the behavior definiton of the BO entity ![bdef icon](../../images/adt_bdef.png)**`ZR_DVSO_H`** and insert the following statement after the section **`delete;`** as shown on the screenshot below: 
 
