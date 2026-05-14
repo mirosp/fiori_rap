@@ -11,8 +11,25 @@ The Object Page displays:
 
 CDS implementation:
 - Items SUM view: [`ZI_DVSO_SUM`](../../source/ZI_DVSO_SUM-ddls.txt#L1-L18)
-```
-todo
+```ABAP
+@EndUserText.label: 'Suma NetAmount Items por Sales Order'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+
+// Suma de items
+define view entity ZI_DVSO_SUM      
+    as select from ZR_DVSO_I
+    
+{
+
+  key SoUUID,
+  key CurrencyCode,
+
+  @Semantics.amount.currencyCode: 'CurrencyCode'
+  cast( sum( NetAmount ) as abap.curr( 23, 2 ) ) as ItemsTotalNetAmount
+  
+}
+
+group by SoUUID, CurrencyCode
 ```
 ---
 - KPI view (header + join to SUM): [`ZI_DVSO_KPI`](../../source/ZI_DVSO_KPI-ddls.txt#L1-L44)
