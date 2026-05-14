@@ -21,7 +21,7 @@ Value helps are wired in the projection views using `@Consumption.valueHelpDefin
   CurrencyCode,
 ```
 ---
-- Item value helps (product/unit/etc.): [`ZC_DVSO_I`](../../source/ZC_DVSO_I-ddls.asddls#L14-L19)
+- Item value helps (product/unit/etc.): [`ZC_DVSO_I`](../../source/ZC_DVSO_I-ddls.txt#L14-L19)
 ```ABAP
   @ObjectModel.text.element: [ 'ProductName' ]
   @Consumption.valueHelpDefinition: [ { entity: { name: '/DMO/I_Supplement_StdVH', element: 'SupplementID' }, useForValidation: true } ]
