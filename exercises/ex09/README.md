@@ -14,6 +14,28 @@ In this hands-on exercise, you will handle a Determinations.
 - Defined here: [`createDocument`](../../source/ZR_DVSO_H-bdef.txt#L51)
 - Implemented here: [`createDocument implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L288-L331)
 
+1. Go to the behavior definiton of the BO entity ![bdef icon](../../images/adt_bdef.png)**`ZR_DVSO_H`** and insert the following statement after the statement **`delete;`** as shown on the screenshot below: 
+
+   ```ABAP 
+     determination createDocument on modify { create; }
+   ```
+   
+   <!-- ![Travel BO Definition](images/new14.png) -->
+   <img src="images/new14.png" alt="Travel BO Definition" width="60%"> 
+   
+   **Short explanation**:  
+   The statement specifies the name of the new determination, `createDocument` and `on modify` as the determination time when creating new instance (`{ create }`).
+   
+2. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.   
+
+3. Now, declare the required method in behavior implementation class with ADT Quick Fix.
+  
+   Set the cursor on the determination name **`createDocument`** and press **Ctrl+1** to open the **Quick Assist** view and select the entry _`Add method for determination createDocument of entity ...`_ in the view.
+   
+   As result, the `FOR DETERMINE` method **`createDocument`** will be added to the local handler class **`lcl_handler`** of the behavior pool of the BO entity ![class icon](../../images/adt_class.png)**`ZBP_R_DVSO_H###`**.
+   
+You are through with the definition of the determination.
+
 #### 2 Default initialization (Header)
 - Determination: `setInitialValues on modify { create; }`
 - Defined here: [`setInitialValues`](../../source/ZR_DVSO_H.bdef.txt#L52)
