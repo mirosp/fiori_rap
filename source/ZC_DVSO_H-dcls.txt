@@ -3,6 +3,5 @@
 define role ZC_DVSO_H {
   grant select on ZC_DVSO_H
   where 
-   inheriting conditions from entity ZR_DVSO_H default true;
-//  INHERITING CONDITIONS FROM ENTITY ZR_DVSO_H REPLACING { ROOT WITH _BaseEntity };
+    INHERITING CONDITIONS FROM ENTITY ZR_DVSO_H REPLACING { ROOT WITH _BaseEntity };
 }
