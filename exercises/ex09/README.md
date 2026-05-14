@@ -33,7 +33,7 @@ In this hands-on exercise, you will handle a Determinations.
   
    Set the cursor on the determination name **`createDocument`** and press **Ctrl+1** to open the **Quick Assist** view and select the entry _`Add method for determination createDocument of entity ...`_ in the view.
    
-   As result, the `FOR DETERMINE` method **`createDocument`** will be added to the local handler class **`lcl_handler`** of the behavior pool of the BO entity ![class icon](../../images/adt_class.png)**`ZBP_R_DVSO_H###`**.
+   As result, the `FOR DETERMINE` method **`createDocument`** will be added to the local handler class **`lcl_handler`** of the behavior pool of the BO entity ![class icon](../../images/adt_class.png)**`ZBP_R_DVSO_H`**.
    
 You are through with the definition of the determination.
 
