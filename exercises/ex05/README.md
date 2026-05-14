@@ -4,6 +4,24 @@
 In this hands-on exercise, you will create a Access control.
 
 ### Authorizations (DCL)
+
+1. Right click on required Data Definition.  
+
+   <!-- ![accesscontroll](images/new_access_control.png)    -->
+   <img src="images/new_access_control.png" alt="accesscontroll" width="60%"> 
+
+2. Fill the required data.
+ 
+   <!-- ![accesscontroll](images/create_access_control.png)    -->
+   <img src="images/create_access_control.png" alt="accesscontroll" width="60%"> 
+
+3. Define transport request.
+
+4. Define/Select template.
+
+   <!-- ![accesscontroll](images/template_access_control.png)    -->
+   <img src="images/template_access_control.png" alt="accesscontroll" width="60%"> 
+
 Access control artifacts included:
 - Root DCL: [`ZR_DVSO_H.dcls`](../../source/ZR_DVSO_H-dcls.txt#L1-L6)
 ```ABAP
