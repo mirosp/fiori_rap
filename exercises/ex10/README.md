@@ -44,34 +44,28 @@ The result should look like this:
       - **`$self`** specifies that the type of the result parameter is the same type as the entity for which the action or function is defined - i.e. the _Travel_ entity type in the present exercise. The return type of the result parameter can be an entity or a structure.     
     - **Note**: The output parameter **`result`** can be used to store the result of an action or function in an internal table. However, it does not affect the result of an action or function that is committed to the database.   
       
-    > ℹ **Further reading**: [Action Definition](https://help.sap.com/viewer/923180ddb98240829d935862025004d6/Cloud/en-US/14ddc6b2442b4b97842af9158a1c9c44.html) 
+   > ℹ **Further reading**: [Action Definition](https://help.sap.com/viewer/923180ddb98240829d935862025004d6/Cloud/en-US/14ddc6b2442b4b97842af9158a1c9c44.html) 
 
 2. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.
 
 3. Now, declare the required method in behavior implementation class with the ADT Quick Fix.
 
-   Set the cursor on the action name, **`deductDiscount`**, and press **Ctrl+1** to open the **Quick Assist** view.
+   Set the cursor on the action name, **`Approve/Reject/CalculateAmounts`**, and press **Ctrl+1** to open the **Quick Assist** view.
   
-    Select the entry _**`Add method for action deductDiscount of entity zrap100_r_traveltp_### ...`**_ in the view to add the required method to the local handler class.   
-
-    <!-- ![Travel BO Behavior Definition](../../images/nn.png) -->
-   <img src="../../images/nn.png" alt="CDS BO Behavior Definition" width="60%">  
+    Select the entry _**`Add methods for actions of entity zrap100_r_traveltp_### ...`**_ in the view to add the required method to the local handler class.   
       
 4. Save ![save icon](../../images/adt_save.png) the changes.
 
-5. Set the cursor on the method name, **`deductDiscount`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](../../images/adt_class.png)**`ZRAP100_BP_TRAVELTP_###`**.   
+5. Set the cursor on the method name, **`Approve/Reject/CalculateAmounts`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](../../images/adt_class.png)**`ZRAP100_BP_TRAVELTP_###`**.   
 
    ![Travel BO Behavior Pool](../../images/b12a.png)
    <!-- <img src="../../images/b12a.png" alt="CDS BO Behavior Pool" width="60%">   -->
 
-6. In the declaration part set the cursor on the method name, **`deductDiscount`**, press **F2**, and examine the full method interface.   
-      
-   <!-- ![Travel BO Behavior Pool](../../images/b12b.png)  -->
-   <img src="../../images/b12b.png" alt="CDS BO Behavior Pool" width="60%">   
+6. In the declaration part set the cursor on the method name, **`Approve/Reject/CalculateAmounts`**, press **F2**, and examine the full method interface.   
   
    **Short explanation**:  
    - The addition **`FOR MODIFY`** after the method name, together with the addition **`FOR ACTION`** after the importing parameter, indicates that this method provides the implementation of an action.
-   - Method signature for the non-factory instance action `deductDiscount`:
+   - Method signature for the non-factory instance action `Approve/Reject/CalculateAmounts`:
      - `IMPORTING`parameter **`keys`** - a table containing the keys of the instances on which the action must be executed
      - Implicit `CHANGING` parameters (aka _implicit response parameters_):  
        - **`result`** - used to store the result of the performed action.
