@@ -25,7 +25,7 @@ Actions are defined on Header:
 Defined here:
 - [`Header actions`](../../source/ZR_DVSO_H-bdef.txt#L39-L41)
 
-1. Go to your behavior definition ![bdef icon](images/adt_bdef.png)**`ZRAP100_R_TRAVELTP_###`** and define the instance action without input paramater.
+1. Go to your behavior definition ![bdef icon](../../images/adt_bdef.png)**`ZRAP100_R_TRAVELTP_###`** and define the instance action without input paramater.
    
    For that, insert the following code snippet after the defined validations as shown on the screenshot below.
 ```
@@ -34,8 +34,8 @@ Defined here:
   action CalculateAmounts result [1] $self;
 ```
 The result should look like this:   
-   <!-- ![CDS BO Behavior Definition](images/b10.png)  -->
-   <img src="images/b10.png" alt="CDS BO Behavior Definition" width="60%">
+   <!-- ![CDS BO Behavior Definition](../../images/b10.png)  -->
+   <img src="../../images/b10.png" alt="CDS BO Behavior Definition" width="60%">
    
    **Short explanation**:  
    - The name of the instance action is specified after the keyword **`action`**
@@ -46,7 +46,7 @@ The result should look like this:
       
     > ℹ **Further reading**: [Action Definition](https://help.sap.com/viewer/923180ddb98240829d935862025004d6/Cloud/en-US/14ddc6b2442b4b97842af9158a1c9c44.html) 
 
-2. Save ![save icon](images/adt_save.png) and activate ![activate icon](images/adt_activate.png) the changes.
+2. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.
 
 3. Now, declare the required method in behavior implementation class with the ADT Quick Fix.
 
@@ -54,20 +54,20 @@ The result should look like this:
   
     Select the entry _**`Add method for action deductDiscount of entity zrap100_r_traveltp_### ...`**_ in the view to add the required method to the local handler class.   
 
-    <!-- ![Travel BO Behavior Definition](images/nn.png) -->
-   <img src="images/nn.png" alt="CDS BO Behavior Definition" width="60%">  
+    <!-- ![Travel BO Behavior Definition](../../images/nn.png) -->
+   <img src="../../images/nn.png" alt="CDS BO Behavior Definition" width="60%">  
       
-4. Save ![save icon](images/adt_save.png) the changes.
+4. Save ![save icon](../../images/adt_save.png) the changes.
 
-5. Set the cursor on the method name, **`deductDiscount`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](images/adt_class.png)**`ZRAP100_BP_TRAVELTP_###`**.   
+5. Set the cursor on the method name, **`deductDiscount`**, press **F3** to navigate to the declaration part of the local handler class of the behavior pool ![class icon](../../images/adt_class.png)**`ZRAP100_BP_TRAVELTP_###`**.   
 
-   ![Travel BO Behavior Pool](images/b12a.png)
-   <!-- <img src="images/b12a.png" alt="CDS BO Behavior Pool" width="60%">   -->
+   ![Travel BO Behavior Pool](../../images/b12a.png)
+   <!-- <img src="../../images/b12a.png" alt="CDS BO Behavior Pool" width="60%">   -->
 
 6. In the declaration part set the cursor on the method name, **`deductDiscount`**, press **F2**, and examine the full method interface.   
       
-   <!-- ![Travel BO Behavior Pool](images/b12b.png)  -->
-   <img src="images/b12b.png" alt="CDS BO Behavior Pool" width="60%">   
+   <!-- ![Travel BO Behavior Pool](../../images/b12b.png)  -->
+   <img src="../../images/b12b.png" alt="CDS BO Behavior Pool" width="60%">   
   
    **Short explanation**:  
    - The addition **`FOR MODIFY`** after the method name, together with the addition **`FOR ACTION`** after the importing parameter, indicates that this method provides the implementation of an action.
