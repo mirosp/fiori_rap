@@ -25,7 +25,7 @@ Actions are defined on Header:
 Defined here:
 - [`Header actions`](../../source/ZR_DVSO_H-bdef.txt#L39-L41)
 
-1. Go to your behavior definition ![bdef icon](../../images/adt_bdef.png)**`ZRAP100_R_TRAVELTP_###`** and define the instance action without input paramater.
+1. Go to your behavior definition ![bdef icon](../../images/adt_bdef.png)**`ZR_DVSO_H`** and define the instance action without input paramater.
    
    For that, insert the following code snippet after the defined validations as shown on the screenshot below.
 ```
