@@ -11,7 +11,7 @@ Header validations (root behavior):
 - `validateCurrency` (CurrencyCode mandatory)
 
 Defined here:
-- [`ZR_DVSO_H validations`](../../source/ZR_DVSO_H-bdef.txt#L39-L48)
+- [`ZR_DVSO_H validations`](../../source/ZR_DVSO_H-bdef.txt#L43-L47)
 
 Item validation:
 - `validateItemsSum on save { create; update; field NetAmount; }`
