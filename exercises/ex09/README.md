@@ -25,7 +25,7 @@ In this hands-on exercise, you will handle a Determinations.
    <img src="images/determination_1.png" alt="Travel BO Definition" width="60%"> 
    
    **Short explanation**:  
-   The statement specifies the name of the new determination, `createDocument` and `on modify` as the determination time when creating new instance (`{ create }`).
+   The statement specifies the name of the new determination, `createDocument` and `on save` as the determination time when creating new instance (`{ create }`).
    
 2. Save ![save icon](../../images/adt_save.png) and activate ![activate icon](../../images/adt_activate.png) the changes.   
 
