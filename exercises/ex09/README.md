@@ -14,14 +14,15 @@ In this hands-on exercise, you will handle a Determinations.
 - Defined here: [`createDocument`](../../source/ZR_DVSO_H-bdef.txt#L51)
 - Implemented here: [`createDocument implementation`](../../source/ZBP_R_DVSO_H-clas.txt#L288-L331)
 
-1. Go to the behavior definiton of the BO entity ![bdef icon](../../images/adt_bdef.png)**`ZR_DVSO_H`** and insert the following statement after the statement **`delete;`** as shown on the screenshot below: 
+1. Go to the behavior definiton of the BO entity ![bdef icon](../../images/adt_bdef.png)**`ZR_DVSO_H`** and insert the following statement after the section **`delete;`** as shown on the screenshot below: 
 
    ```ABAP 
-     determination createDocument on modify { create; }
+       determination createDocument on save { create; update; field SalesOrder; }
+       determination setInitialValues on modify { create; }
    ```
    
-   <!-- ![Travel BO Definition](images/new14.png) -->
-   <img src="images/new14.png" alt="Travel BO Definition" width="60%"> 
+   <!-- ![Travel BO Definition](images/determination_1.png) -->
+   <img src="images/determination_1.png" alt="Travel BO Definition" width="60%"> 
    
    **Short explanation**:  
    The statement specifies the name of the new determination, `createDocument` and `on modify` as the determination time when creating new instance (`{ create }`).
