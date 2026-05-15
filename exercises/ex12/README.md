@@ -73,9 +73,6 @@ Most common:
 Usually:
  - Connect to an OData Service
 
-   <!-- ![BAS](images/bas_4.png)  -->
-   <img src="images/bas_4.png" alt="BAS" width="60%">
-
 Options may include:
  - ABAP System
  - CAP Project
@@ -94,37 +91,36 @@ Example:
 
 If needed, log in with SAP credentials.
 
-   <!-- ![BAS](images/bas_5.png)  -->
-   <img src="images/bas_5.png" alt="BAS" width="60%">
-
 8. Select OData service
 
 Choose:
 - OData V2 or V4 service
 
-
-   <!-- ![BAS](images/bas_6.png)  -->
-   <img src="images/bas_6.png" alt="BAS" width="60%">
+   <!-- ![BAS](images/bas_4.png)  -->
+   <img src="images/bas_4.png" alt="BAS" width="60%">
 
 9. Select main entity set
 
 Example:
 
-SalesOrderSet
+   <!-- ![BAS](images/bas_5.png)  -->
+   <img src="images/bas_5.png" alt="BAS" width="60%">
 
 This becomes the main page entity.
 
 10. Configure app details
 
-   <!-- ![BAS](images/bas_7.png)  -->
-   <img src="images/bas_7.png" alt="BAS" width="60%">
+   <!-- ![BAS](images/bas_6.png)  -->
+   <img src="images/bas_6.png" alt="BAS" width="60%">
    
 11. Configure deployment target (optional)
 
 You can:
+ - Configure later
+ - Or specify ABAP deployment now
 
-Configure later
-Or specify ABAP deployment now
+   <!-- ![BAS](images/bas_7.png)  -->
+   <img src="images/bas_7.png" alt="BAS" width="60%">
 
 Usually easiest:
  - Skip for now
