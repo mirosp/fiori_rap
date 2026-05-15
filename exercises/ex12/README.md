@@ -9,7 +9,40 @@ Use:
 SAP Business Application Studio
 Visual Studio Code
 
-Consume the OData V2/V4 services.
+1. Open SAP Business Application Studio
+
+Launch your BAS dev space.
+
+Recommended dev space type:
+SAP Fiori
+
+If you don’t have one yet:
+
+ - Create Dev Space
+ - Choose:
+   - SAP Fiori
+ - Start the dev space
+
+2. Open the Command Palette
+
+Use:
+```
+Ctrl + Shift + P
+```
+or:
+```
+F1
+```
+
+3. Start the generator
+
+Search for:
+```
+Fiori: Open Application Generator
+```
+Select it.
+
+or:
 
    <!-- ![BAS](images/bas_1.png)  -->
    <img src="images/bas_1.png" alt="BAS" width="60%">
@@ -18,9 +51,115 @@ Consume the OData V2/V4 services.
    <!-- ![BAS](images/bas_2.png)  -->
    <img src="images/bas_2.png" alt="BAS" width="60%">
 
+4. Choose application type
+
+Select:
+ - SAP Fiori elements
 
    <!-- ![BAS](images/bas_3.png)  -->
    <img src="images/bas_3.png" alt="BAS" width="60%">
+
+5. Choose floorplan
+
+Common options:
+
+List Report Object Page
+Overview Page
+Worklist
+Analytical List Page
+
+Most common:
+
+List Report Object Page
+6. Select data source
+
+Usually:
+
+Connect to an OData Service
+
+Options may include:
+
+ABAP System
+CAP Project
+Local Metadata File
+7. Select system/destination
+
+Choose:
+
+Existing destination
+SAP system connection
+
+Example:
+
+S/4HANA
+Gateway
+Local CAP service
+
+If needed, log in with SAP credentials.
+
+8. Select OData service
+
+Choose:
+
+OData V2 or V4 service
+
+Example:
+
+ZUI_SALESORDER_SRV
+9. Select main entity set
+
+Example:
+
+SalesOrderSet
+
+This becomes the main page entity.
+
+10. Configure app details
+
+Fill in:
+
+Field	Example
+Module Name	salesorders
+Application Title	Sales Orders
+Namespace	com.mycompany
+Description	Sales Order Management
+11. Configure deployment target (optional)
+
+You can:
+
+Configure later
+Or specify ABAP deployment now
+
+Usually easiest:
+
+Skip for now
+12. Finish generation
+
+Click:
+
+Finish
+
+BAS will:
+
+Generate the project
+Install npm dependencies
+Create UI5 configuration
+Generate annotations setup
+13. Wait for project generation
+
+Generated structure typically:
+
+webapp/
+  manifest.json
+  annotations/
+  localService/
+package.json
+ui5.yaml
+
+
+
+
+
 
 
    <!-- ![BAS](images/bas_4.png)  -->
