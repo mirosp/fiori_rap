@@ -36,22 +36,31 @@ lock master total etag LastChangedAt
 ---
 - Composition to items (draft-enabled): [`association _Items { create; with draft; }`](../../source/ZR_DVSO_H-bdef.txt##L36-L37)
 ```ABAP
-todo
+association _Items {create; with draft;}
 ```
 ---
 - Draft actions: [`Activate/Discard/Edit/Resume`](../../source/ZR_DVSO_H-bdef.txt##L55-L57)
 ```ABAP
-todo
+draft action Activate optimized;
+draft action Discard;
+draft action Edit;
+draft action Resume;
 ```
 ---
 - Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](../../source/ZR_DVSO_H-bdef.txt##L58-L64)
 ```ABAP
-todo
+draft determine action Prepare {
+  validation Item~validateItemsSum;
+  validation validateCustomer;
+  validation validateAmounts;
+  validation validateDocumentDate;
+  validation validateCurrency;
+}
 ```
 ---
 
 Projection behavior (exposes actions to the UI):
-- `ZC_DVSO_H.bdef`
+- [`ZC_DVSO_H.bdef`](../../source/ZC_DVSO_H-bdef.txt##L1-L11)
 ```
 todo
 ```
