@@ -38,7 +38,6 @@ define root view entity ZC_DVSO_H
 
       OverallStatus,
 
-
       @Semantics: { amount.currencyCode: 'CurrencyCode' }
       _KPI.ItemsTotalNetAmount    as ItemsTotalNetAmount,
 
@@ -62,6 +61,6 @@ define root view entity ZC_DVSO_H
 
       /* Asociaciones */
       _Customer,
-      //      _KPI,
+      _KPI,
       _Items : redirected to composition child ZC_DVSO_I
 }
