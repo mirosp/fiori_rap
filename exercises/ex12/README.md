@@ -58,13 +58,16 @@ Select:
 5. Choose floorplan
 
 Common options:
- - List Report Object Page
+ - List Report Page
+ - Object Page
  - Overview Page
  - Worklist
  - Analytical List Page
 
 Most common:
- - List Report Object Page
+ - List Report Page
+ - Object Page
+
    <!-- ![BAS](images/bas_3.png)  -->
    <img src="images/bas_3.png" alt="BAS" width="60%">
    
