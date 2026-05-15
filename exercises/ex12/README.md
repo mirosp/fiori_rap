@@ -47,7 +47,7 @@ Consume the OData V2/V4 services.
    <img src="images/bas_prew_2.png" alt="BAS" width="60%">
 
    <!-- ![BAS](images/bas_npm_1.png)  -->
-   <img src="images/bas_npm_1.png" alt="BAS" width="60%">
+   <img src="images/bas_npm_1.png" alt="BAS" width="40%">
 
 ```
 npm run start
@@ -159,7 +159,7 @@ This creates the dist/ folder.
 
 Run:
    <!-- ![BAS](images/bas_npm_2.png)  -->
-   <img src="images/bas_npm_2.png" alt="BAS" width="30%">
+   <img src="images/bas_npm_2.png" alt="BAS" width="40%">
 
 ```
 npm run deploy
