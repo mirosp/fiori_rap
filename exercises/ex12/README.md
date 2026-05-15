@@ -39,12 +39,18 @@ Consume the OData V2/V4 services.
    <img src="images/bas_7.png" alt="BAS" width="60%">
 
 ### Run Fiori Elements App (Optional)
-
+## 1. Right click webapp/
    <!-- ![BAS](images/bas_prew_1.png)  -->
    <img src="images/bas_prew_1.png" alt="BAS" width="60%">
 
    <!-- ![BAS](images/bas_prew_2.png)  -->
    <img src="images/bas_prew_2.png" alt="BAS" width="60%">
+
+## 2. Start the local UI5 server
+
+Most Fiori elements apps use one of these commands.
+
+Option A — Preferred
 
    <!-- ![BAS](images/bas_npm_1.png)  -->
    <img src="images/bas_npm_1.png" alt="BAS" width="40%">
@@ -52,6 +58,11 @@ Consume the OData V2/V4 services.
 ```
 npm run start
 ```
+
+This usually runs:
+UI5 server
+Fiori tools preview middleware
+OData proxy
 
   
 ### Deploy Fiori Elements App (Optional)
