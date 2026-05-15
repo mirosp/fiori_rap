@@ -11,11 +11,11 @@ This app uses **managed RAP with draft**, so users can:
 - Get consistent locking + ETags
 
 Root behavior definition (draft + etag/locks + validations + actions + mappings):
-- [`ZR_DVSO_H.bdef`](source/zr_dvso_h.bdef.asbdef#L1-L144)
+- [`ZR_DVSO_H.bdef`](source/ZR_DVSO_H-bdef.txt)
 
 Highlights:
 - Draft + strict mode: `managed implementation / strict / with draft`
-```
+```ABAP
 managed implementation in class ZBP_R_DVSO_H unique; 
 strict ( 2 ); 
 with draft; 
@@ -29,23 +29,23 @@ draft table ZDVSO_H_D
 ---
 
 - ETag + locks: `etag master` + `lock master`
-```
+```ABAP
 etag master LocalLastChangedAt 
 lock master total etag LastChangedAt 
 ```
 ---
 - Composition to items (draft-enabled): `association _Items { create; with draft; }`
-```
+```ABAP
 todo
 ```
 ---
 - Draft actions: `Activate/Discard/Edit/Resume`
-```
+```ABAP
 todo
 ```
 ---
 - Draft Prepare orchestrating validations: `Prepare { validation Item~validateItemsSum; etc }`
-```
+```ABAP
 todo
 ```
 ---
