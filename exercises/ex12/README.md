@@ -63,7 +63,7 @@ npm run start
    <img src="images/bas_appinfo_2.png" alt="BAS" width="60%">
 
 
-1. Open the terminal in BAS
+## 1. Open the terminal in BAS
 
 In BAS:
 ```
@@ -73,7 +73,7 @@ Go to your app folder if needed:
 ```
 cd myprojectname
 ```
-2. Install dependencies
+## 2. Install dependencies
 
 Run:
 ```
@@ -81,7 +81,7 @@ npm install
 ```
 This installs the deployment tooling from your package.json.
 
-3. Verify deployment configuration
+## 3. Verify deployment configuration
 
 Check that your project contains:
 
@@ -97,7 +97,7 @@ In package.json, you should typically see a deploy script like:
 }
 ```
 
-4. Configure ui5-deploy.yaml
+## 4. Configure ui5-deploy.yaml
 
 Example:
 ```
@@ -134,7 +134,7 @@ name → BSP application name
 package → ABAP package
 transport → transport request
 
-5. Add deployment tooling (if missing)
+## 5. Add deployment tooling (if missing)
 
 If fiori deploy is not available:
 ```
@@ -147,7 +147,7 @@ Sometimes also:
 npm install --save-dev nwabap-ui5uploader
 ```
 
-6. Build the app
+## 6. Build the app
 
 Run:
 ```
@@ -155,7 +155,7 @@ npm run build
 ```
 This creates the dist/ folder.
 
-7. Deploy from terminal
+## 7. Deploy from terminal
 
 Run:
    <!-- ![BAS](images/bas_npm_2.png)  -->
