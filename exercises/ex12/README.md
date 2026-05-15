@@ -39,14 +39,14 @@ Consume the OData V2/V4 services.
    <img src="images/bas_7.png" alt="BAS" width="60%">
 
 ### Run Fiori Elements App (Optional)
-## 1. Right click webapp/
+1. Right click webapp/
    <!-- ![BAS](images/bas_prew_1.png)  -->
    <img src="images/bas_prew_1.png" alt="BAS" width="60%">
 
    <!-- ![BAS](images/bas_prew_2.png)  -->
    <img src="images/bas_prew_2.png" alt="BAS" width="60%">
 
-## 2. Start the local UI5 server
+2. Start the local UI5 server
 
 Most Fiori elements apps use one of these commands.
 
@@ -64,7 +64,7 @@ UI5 server
 Fiori tools preview middleware
 OData proxy
 
-## 3. Wait for startup
+3. Wait for startup
 
 Typical successful output:
 
@@ -78,7 +78,7 @@ In BAS:
 Click the popup(allow popup):
 Open in New Tab
 
-## 4. Stop the preview server
+4. Stop the preview server
 
 Press:
 ```
@@ -95,7 +95,7 @@ in the terminal.
    <img src="images/bas_appinfo_2.png" alt="BAS" width="60%">
 
 
-## 1. Open the terminal in BAS
+1. Open the terminal in BAS
 
 In BAS:
 ```
@@ -105,7 +105,7 @@ Go to your app folder if needed:
 ```
 cd myprojectname
 ```
-## 2. Install dependencies
+2. Install dependencies
 
 Run:
 ```
@@ -113,7 +113,7 @@ npm install
 ```
 This installs the deployment tooling from your package.json.
 
-## 3. Verify deployment configuration
+3. Verify deployment configuration
 
 Check that your project contains:
 
@@ -129,7 +129,7 @@ In package.json, you should typically see a deploy script like:
 }
 ```
 
-## 4. Configure ui5-deploy.yaml
+4. Configure ui5-deploy.yaml
 
 Example:
 ```
@@ -166,7 +166,7 @@ name → BSP application name
 package → ABAP package
 transport → transport request
 
-## 5. Add deployment tooling (if missing)
+5. Add deployment tooling (if missing)
 
 If fiori deploy is not available:
 ```
@@ -179,7 +179,7 @@ Sometimes also:
 npm install --save-dev nwabap-ui5uploader
 ```
 
-## 6. Build the app
+6. Build the app
 
 Run:
 ```
@@ -187,7 +187,7 @@ npm run build
 ```
 This creates the dist/ folder.
 
-## 7. Deploy from terminal
+7. Deploy from terminal
 
 Run:
    <!-- ![BAS](images/bas_npm_2.png)  -->
