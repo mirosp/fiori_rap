@@ -3,7 +3,7 @@
 ## Introduction
 In this hands-on exercise, you will create a Fiori Elements app in BAS.
 
-###Generate Fiori Elements App (Optional)
+### Generate Fiori Elements App (Optional)
 
 Use:
 SAP Business Application Studio
@@ -38,7 +38,7 @@ Consume the OData V2/V4 services.
    <!-- ![BAS](images/bas_7.png)  -->
    <img src="images/bas_7.png" alt="BAS" width="60%">
 
-###Run Fiori Elements App (Optional)
+### Run Fiori Elements App (Optional)
 
    <!-- ![BAS](images/bas_prew_1.png)  -->
    <img src="images/bas_prew_1.png" alt="BAS" width="60%">
@@ -54,7 +54,7 @@ npm run start
 ```
 
   
-###Deploy Fiori Elements App (Optional)
+### Deploy Fiori Elements App (Optional)
 
    <!-- ![BAS](images/bas_appinfo_2.png)  -->
    <img src="images/bas_appinfo_1.png" alt="BAS" width="60%">
