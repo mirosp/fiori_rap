@@ -47,65 +47,65 @@ or:
    <!-- ![BAS](images/bas_1.png)  -->
    <img src="images/bas_1.png" alt="BAS" width="60%">
 
-
-   <!-- ![BAS](images/bas_2.png)  -->
-   <img src="images/bas_2.png" alt="BAS" width="60%">
-
 4. Choose application type
 
 Select:
  - SAP Fiori elements
 
-   <!-- ![BAS](images/bas_3.png)  -->
-   <img src="images/bas_3.png" alt="BAS" width="60%">
+   <!-- ![BAS](images/bas_2.png)  -->
+   <img src="images/bas_2.png" alt="BAS" width="60%">
 
 5. Choose floorplan
 
 Common options:
-
-List Report Object Page
-Overview Page
-Worklist
-Analytical List Page
+ - List Report Object Page
+ - Overview Page
+ - Worklist
+ - Analytical List Page
 
 Most common:
-
-List Report Object Page
+ - List Report Object Page
+   <!-- ![BAS](images/bas_3.png)  -->
+   <img src="images/bas_3.png" alt="BAS" width="60%">
+   
 6. Select data source
 
 Usually:
+ - Connect to an OData Service
 
-Connect to an OData Service
+   <!-- ![BAS](images/bas_4.png)  -->
+   <img src="images/bas_4.png" alt="BAS" width="60%">
 
 Options may include:
+ - ABAP System
+ - CAP Project
+ - Local Metadata File
 
-ABAP System
-CAP Project
-Local Metadata File
 7. Select system/destination
 
 Choose:
-
-Existing destination
-SAP system connection
+ - Existing destination
+ - SAP system connection
 
 Example:
-
-S/4HANA
-Gateway
-Local CAP service
+ - S/4HANA
+ - Gateway
+ - Local CAP service
 
 If needed, log in with SAP credentials.
+
+   <!-- ![BAS](images/bas_5.png)  -->
+   <img src="images/bas_5.png" alt="BAS" width="60%">
 
 8. Select OData service
 
 Choose:
+- OData V2 or V4 service
 
-OData V2 or V4 service
 
-Example:
+   <!-- ![BAS](images/bas_6.png)  -->
+   <img src="images/bas_6.png" alt="BAS" width="60%">
 
-ZUI_SALESORDER_SRV
 9. Select main entity set
 
 Example:
@@ -116,13 +116,9 @@ This becomes the main page entity.
 
 10. Configure app details
 
-Fill in:
-
-Field	Example
-Module Name	salesorders
-Application Title	Sales Orders
-Namespace	com.mycompany
-Description	Sales Order Management
+   <!-- ![BAS](images/bas_7.png)  -->
+   <img src="images/bas_7.png" alt="BAS" width="60%">
+   
 11. Configure deployment target (optional)
 
 You can:
@@ -131,51 +127,31 @@ Configure later
 Or specify ABAP deployment now
 
 Usually easiest:
+ - Skip for now
 
-Skip for now
 12. Finish generation
 
 Click:
-
+```
 Finish
-
+```
 BAS will:
+ - Generate the project
+ - Install npm dependencies
+ - Create UI5 configuration
+ - Generate annotations setup
 
-Generate the project
-Install npm dependencies
-Create UI5 configuration
-Generate annotations setup
 13. Wait for project generation
 
 Generated structure typically:
-
+```
 webapp/
   manifest.json
   annotations/
   localService/
 package.json
 ui5.yaml
-
-
-
-
-
-
-
-   <!-- ![BAS](images/bas_4.png)  -->
-   <img src="images/bas_4.png" alt="BAS" width="60%">
-
-
-   <!-- ![BAS](images/bas_5.png)  -->
-   <img src="images/bas_5.png" alt="BAS" width="60%">
-
-
-   <!-- ![BAS](images/bas_6.png)  -->
-   <img src="images/bas_6.png" alt="BAS" width="60%">
-
-
-   <!-- ![BAS](images/bas_7.png)  -->
-   <img src="images/bas_7.png" alt="BAS" width="60%">
+```
 
 ### Run Fiori Elements App (Optional)
 1. Right click webapp/
