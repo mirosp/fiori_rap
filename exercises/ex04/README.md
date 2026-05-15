@@ -11,10 +11,10 @@ This app uses **managed RAP with draft**, so users can:
 - Get consistent locking + ETags
 
 Root behavior definition (draft + etag/locks + validations + actions + mappings):
-- [`ZR_DVSO_H.bdef`](source/ZR_DVSO_H-bdef.txt)
+- [`ZR_DVSO_H.bdef`](../../source/ZR_DVSO_H-bdef.txt)
 
 Highlights:
-- Draft + strict mode: [`managed implementation / strict / with draft`](source/ZR_DVSO_H-bdef.txt##L1-L12)
+- Draft + strict mode: [`managed implementation / strict / with draft`](../../source/ZR_DVSO_H-bdef.txt##L1-L12)
 ```ABAP
 managed implementation in class ZBP_R_DVSO_H unique; 
 strict ( 2 ); 
@@ -28,23 +28,23 @@ draft table ZDVSO_H_D
 ```
 ---
 
-- ETag + locks: [`etag master` + `lock master`](source/ZR_DVSO_H-bdef.txt##L10-L11)
+- ETag + locks: [`etag master` + `lock master`](../../source/ZR_DVSO_H-bdef.txt##L10-L11)
 ```ABAP
 etag master LocalLastChangedAt 
 lock master total etag LastChangedAt 
 ```
 ---
-- Composition to items (draft-enabled): [`association _Items { create; with draft; }`](source/ZR_DVSO_H-bdef.txt##L36-L37)
+- Composition to items (draft-enabled): [`association _Items { create; with draft; }`](../../source/ZR_DVSO_H-bdef.txt##L36-L37)
 ```ABAP
 todo
 ```
 ---
-- Draft actions: [`Activate/Discard/Edit/Resume`](source/ZR_DVSO_H-bdef.txt##L55-L57)
+- Draft actions: [`Activate/Discard/Edit/Resume`](../../source/ZR_DVSO_H-bdef.txt##L55-L57)
 ```ABAP
 todo
 ```
 ---
-- Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](source/ZR_DVSO_H-bdef.txt##L58-L64)
+- Draft Prepare orchestrating validations: [`Prepare { validation Item~validateItemsSum; etc }`](../../source/ZR_DVSO_H-bdef.txt##L58-L64)
 ```ABAP
 todo
 ```
