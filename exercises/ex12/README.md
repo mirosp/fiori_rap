@@ -64,6 +64,27 @@ UI5 server
 Fiori tools preview middleware
 OData proxy
 
+## 3. Wait for startup
+
+Typical successful output:
+
+Server started
+```
+URL: http://localhost:8080
+```
+
+In BAS:
+
+Click the popup(allow popup):
+Open in New Tab
+
+## 4. Stop the preview server
+
+Press:
+```
+CTRL + C
+```
+in the terminal.
   
 ### Deploy Fiori Elements App (Optional)
 
