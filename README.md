@@ -29,7 +29,7 @@ The service exposes projections:
 - **Item projection:** [`ZC_DVSO_I`](source/ZC_DVSO_H-ddls.txt)
 
 Redirected composition is visible in the header projection:
-- `_Items redirected to composition child ZC_DVSO_I`: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L55)
+- `_Items redirected to composition child ZC_DVSO_I`: [`ZC_DVSO_H`](source/ZC_DVSO_H-ddls.txt#L65)
 
 ---
 
